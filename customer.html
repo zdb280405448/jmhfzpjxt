@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>姐妹花脆皮炭炉鸡煲 - 评价窗口</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .header {
+            background-color: #e74c3c;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-height: 100vh;
+        }
+        .evaluation-container {
+            margin-bottom: 30px;
+        }
+        .evaluation-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .evaluation-title {
+            color: #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .evaluation-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .copy-btn, .modify-btn {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .copy-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        .copy-btn:hover {
+            background-color: #2980b9;
+        }
+        .modify-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+        .modify-btn:hover {
+            background-color: #e67e22;
+        }
+        .app-buttons {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .app-btn {
+            display: inline-block;
+            width: 200px;
+            margin: 10px;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+        #meituan-btn {
+            background-color: #FF3000;
+        }
+        #meituan-btn:hover {
+            background-color: #d32f00;
+        }
+        #douyin-btn {
+            background-color: #000000;
+        }
+        #douyin-btn:hover {
+            background-color: #333333;
+        }
+        .success-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        姐妹花脆皮炭炉鸡煲 欢迎您的大驾光临
+    </div>
+    
+    <div class="container">
+        <h2 style="text-align: center; color: #e74c3c; margin-bottom: 30px;">请对我们的菜品进行评价</h2>
+        
+        <div class="evaluation-container">
+            <div class="evaluation-item">
+                <div class="evaluation-title">脆皮鸡评价</div>
+                <textarea id="crispy-chicken-comment" class="evaluation-textarea" placeholder="请输入您对脆皮鸡的评价..."></textarea>
+                <div class="action-buttons">
+                    <button class="copy-btn" onclick="copyToClipboard('crispy-chicken-comment')">复制评价</button>
+                    <button class="modify-btn" onclick="focusTextarea('crispy-chicken-comment')">修改评价</button>
+                </div>
+            </div>
+            
+            <div class="evaluation-item">
+                <div class="evaluation-title">五指香菌鸡评价</div>
+                <textarea id="mushroom-chicken-comment" class="evaluation-textarea" placeholder="请输入您对五指香菌鸡的评价..."></textarea>
+                <div class="action-buttons">
+                    <button class="copy-btn" onclick="copyToClipboard('mushroom-chicken-comment')">复制评价</button>
+                    <button class="modify-btn" onclick="focusTextarea('mushroom-chicken-comment')">修改评价</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="app-buttons">
+            <h3 style="text-align: center; color: #555; margin-bottom: 20px;">分享到以下平台</h3>
+            <button class="app-btn" id="meituan-btn" onclick="openApp('meituan')">打开美团</button>
+            <button class="app-btn" id="douyin-btn" onclick="openApp('douyin')">打开抖音</button>
+        </div>
+    </div>
+    
+    <div class="success-message" id="success-message">
+        评价已复制到剪贴板！
+    </div>
+
+    <script>
+        // 评价内容库 - 自然融入味道、环境、服务三个方面
+        const crispyChickenComments = [
+            "现切现涮的脆皮鸡脆嫩可口，锅底香气十足，店员们热情周到，上菜速度快，店内环境干净整洁，炭炉火锅的氛围很温馨，整体体验非常好！",
+            "姐妹们的脆皮鸡真是名不虚传，鸡肉新鲜紧实，口感脆嫩多汁，蘸料也很美味。店面装修简约大方，座位舒适安静，服务员态度亲切，会主动加水换碟，细节做得很到位。",
+            "这家的脆皮鸡太好吃了！肉质脆嫩有嚼劲，汤底越煮越香。店内通风很好，没有火锅的闷热感，卫生状况也不错。老板很热情，会详细介绍菜品和推荐吃法，服务很专业。",
+            "现切鸡肉新鲜度很好，炭炉烹饪锁住了肉汁，味道丰富有层次。位置好找停车方便，店内布局合理空间宽敞，用餐环境舒适。店员反应迅速，需求响应及时，服务体验很满意。",
+            "脆皮鸡是他们家的特色，外脆里嫩配合秘制蘸料非常美味，锅底清淡不油腻。店面虽不大但温馨舒适，装修有特色很适合朋友小聚。从点餐到用餐全程服务贴心，体验感很好。"
+        ];
+        
+        const mushroomChickenComments = [
+            "五指香菌鸡汤鲜美醇厚，菌菇香气浓郁，鸡肉炖得软烂入味。店内干净整洁，座位舒适，环境安静适合用餐。服务员热情好客，介绍菜品详细，上菜速度快，服务态度很好。",
+            "菌菇种类丰富新鲜，鸡汤熬制得恰到好处，鲜香不油腻回味无穷。店面装修雅致，灯光温馨营造出舒适的用餐氛围。店员态度友善，会主动为顾客添加茶水，服务细致周到很贴心。",
+            "五指香菌鸡真的很棒，菌菇与鸡肉的搭配相得益彰，汤头浓郁鲜美。位置便利，店内宽敞明亮，通风良好没有异味，用餐环境舒适。老板很热情，会根据人数推荐合适的分量，服务很贴心。",
+            "菌菇鸡汤口感醇厚，每一口都充满鲜香，鸡肉嫩滑多汁。店内布置温馨，桌椅整洁，卫生状况良好。店员动作麻利，点餐系统先进，整体服务效率高，体验不错。",
+            "五指香菌鸡太美味了，菌菇的鲜香和鸡肉的鲜嫩完美融合，汤底清澈但滋味十足。店面虽小但精致，装饰有特色，用餐环境安静舒适。服务员专业且热情，提供的用餐建议很实用。"
+        ];
+        
+        // 随机选择评价内容
+        function getRandomComment(comments) {
+            return comments[Math.floor(Math.random() * comments.length)];
+        }
+        
+        // 初始化评价内容
+        function initComments() {
+            document.getElementById('crispy-chicken-comment').value = getRandomComment(crispyChickenComments);
+            document.getElementById('mushroom-chicken-comment').value = getRandomComment(mushroomChickenComments);
+        }
+        
+        // 复制评价到剪贴板
+        function copyToClipboard(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // 兼容移动设备
+            
+            try {
+                document.execCommand('copy');
+                
+                // 显示成功消息
+                const successMessage = document.getElementById('success-message');
+                successMessage.style.display = 'block';
+                
+                // 3秒后隐藏消息
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            } catch (err) {
+                alert('复制失败，请手动复制评价内容');
+            }
+        }
+        
+        // 聚焦到文本框进行修改
+        function focusTextarea(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.focus();
+        }
+        
+        // 打开应用
+        function openApp(appName) {
+            // APP打开状态标志
+            let appOpened = false;
+            
+            // 增加页面隐藏检测
+            const beforeHiddenTime = Date.now();
+            
+            // 添加页面可见性变化监听来检测APP是否成功打开
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            
+            function handleVisibilityChange() {
+                // 如果页面变为隐藏，说明可能成功打开了APP
+                if (document.hidden) {
+                    // 检查时间差，排除页面切换等情况
+                    const hiddenTime = Date.now() - beforeHiddenTime;
+                    if (hiddenTime < 3000) { // 3秒内隐藏视为APP打开
+                        appOpened = true;
+                    }
+                    // 移除事件监听
+                    document.removeEventListener('visibilitychange', handleVisibilityChange);
+                }
+            }
+            
+            // 针对不同版本抖音的URL Schemes
+            const schemes = {
+                meituan: 'imeituan://',
+                // 抖音主Scheme
+                douyin: 'douyin://'
+            };
+            
+            // 备用打开方式 - 增加不同抖音版本和平台的URL Schemes
+            const alternativeSchemes = {
+                douyin: [
+                    // 标准版抖音
+                    'snssdk1128://',
+                    // 国际版TikTok
+                    'tiktok://',
+                    'tiktoklite://',
+                    // 不同SDK版本
+                    'snssdk1112://',
+                    'snssdk1140://',
+                    'snssdk1233://',
+                    // 极速版
+                    'douyinlite://',
+                    // Aweme底层框架
+                    'aweme://',
+                    // 企业版
+                    'douyinpro://'
+                ]
+            };
+            
+            // 更新下载链接，使用更通用的下载页面
+            const downloadUrls = {
+                meituan: 'https://apps.apple.com/cn/app/id423084029',
+                douyin: 'https://www.douyin.com/download'
+            };
+            
+            const scheme = schemes[appName];
+            const downloadUrl = downloadUrls[appName];
+            const altSchemes = alternativeSchemes[appName] || [];
+            
+            // 抖音专用打开策略 - 针对手机端优化的多策略方案
+            if (appName === 'douyin') {
+                // 增加更多可能的scheme，特别是适合移动端的
+                const allSchemes = [
+                    // 标准scheme
+                    'douyin://',
+                    'snssdk1128://',
+                    // 移动端常用scheme
+                    'snssdk1112://',
+                    'snssdk1140://',
+                    'snssdk1233://',
+                    'snssdk1433://',
+                    'snssdk1423://',
+                    'snssdk157://',
+                    // 抖音极速版
+                    'douyinlite://',
+                    'snssdk2133://',
+                    // TikTok国际版
+                    'tiktok://',
+                    'tiktoklite://',
+                    // 底层框架
+                    'aweme://',
+                    // 企业版
+                    'douyinpro://',
+                    // 抖音火山版
+                    'huoshan://',
+                    // 内部版本scheme
+                    'snssdk1180://',
+                    'snssdk1200://',
+                    'snssdk1241://',
+                    'snssdk1299://',
+                    'snssdk1300://',
+                    // 直播相关
+                    'douyinlive://'
+                ];
+                
+                // 检测是否为移动设备
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                // 移动设备优化：使用更激进的打开策略
+                if (isMobile) {
+                    console.log('检测到移动设备，使用移动端优化策略');
+                    
+                    // 1. 创建专门的移动设备尝试函数
+                    function tryMobileOpen(url, delay = 0) {
+                        setTimeout(() => {
+                            if (!appOpened) {
+                                try {
+                                    console.log(`移动端尝试打开: ${url}`);
+                                    
+                                    // 对于移动设备，同时尝试多种方法
+                                    // a. 尝试使用iframe (某些浏览器允许)
+                                    tryIframeOpen(url);
+                                    
+                                    // b. 直接设置location.href
+                                    window.location.href = url;
+                                    
+                                    // c. 对于iOS，尝试使用document.createElement('a')方法
+                                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                                        const a = document.createElement('a');
+                                        a.href = url;
+                                        a.style.display = 'none';
+                                        document.body.appendChild(a);
+                                        // 使用合成点击事件
+                                        const event = document.createEvent('MouseEvent');
+                                        event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                                        a.dispatchEvent(event);
+                                        setTimeout(() => document.body.removeChild(a), 100);
+                                    }
+                                } catch (e) {
+                                    console.error(`移动端打开失败:`, e);
+                                }
+                            }
+                        }, delay);
+                    }
+                    
+                    // 立即尝试主要的scheme
+                    tryMobileOpen(scheme, 0);
+                    
+                    // 快速并行尝试前5个最常用的scheme
+                    const topSchemes = allSchemes.slice(0, 5);
+                    topSchemes.forEach((s, i) => {
+                        if (s !== scheme) {
+                            tryMobileOpen(s, 50 * (i + 1));
+                        }
+                    });
+                    
+                    // 然后顺序尝试其他scheme，使用递增的延迟
+                    allSchemes.slice(5).forEach((s, i) => {
+                        tryMobileOpen(s, 300 + (i * 100));
+                    });
+                    
+                    // 移动设备上额外的备用方案：直接跳转到抖音网页版分享页面
+                    setTimeout(() => {
+                        if (!appOpened) {
+                            console.log('尝试跳转抖音网页版');
+                            // 使用抖音网页版的分享页面，可能会引导用户打开APP
+                            window.location.href = 'https://www.douyin.com/?share_from_web_id=xxx';
+                        }
+                    }, 1500);
+                } else {
+                    // 桌面设备使用原来的策略
+                    // 1. 立即使用window.open方式打开主scheme
+                    try {
+                        const newWindow = window.open(scheme, '_blank');
+                        setTimeout(() => {
+                            if (newWindow && !newWindow.closed) {
+                                newWindow.close();
+                            }
+                        }, 1000);
+                    } catch (e) {
+                        console.error('window.open失败:', e);
+                    }
+                    
+                    // 2. 同时使用window.location.href尝试
+                    try {
+                        window.location.href = scheme;
+                    } catch (e) {
+                        console.error('直接跳转失败:', e);
+                    }
+                    
+                    // 3. 立即尝试iframe打开
+                    tryIframeOpen(scheme);
+                    
+                    // 4. 尝试备用scheme
+                    allSchemes.forEach((altScheme, index) => {
+                        if (altScheme !== scheme) {
+                            setTimeout(() => {
+                                if (!appOpened) {
+                                    try {
+                                        console.log(`尝试备用scheme: ${altScheme}`);
+                                        window.location.href = altScheme;
+                                    } catch (e) {
+                                        console.error(`备用scheme失败:`, e);
+                                    }
+                                }
+                            }, 100 * (index + 1));
+                        }
+                    });
+                }
+            } else {
+                // 美团等其他APP使用直接打开方式
+                try {
+                    window.location.href = scheme;
+                } catch (e) {
+                    console.error('直接跳转失败:', e);
+                }
+            }
+            
+            // 尝试使用iframe打开APP
+            function tryIframeOpen(url) {
+                try {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.display = 'none';
+                    iframe.style.border = 'none';
+                    iframe.style.width = '0';
+                    iframe.style.height = '0';
+                    document.body.appendChild(iframe);
+                    
+                    setTimeout(() => {
+                        try {
+                            document.body.removeChild(iframe);
+                        } catch (err) {
+                            console.log('移除iframe时出错:', err);
+                        }
+                    }, 1000);
+                } catch (e) {
+                    console.error('iframe打开失败:', e);
+                }
+            }
+            
+            // 设置备用方案 - 只在确定APP没有打开时显示
+            setTimeout(() => {
+                // 移除事件监听
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+                
+                // 只有当检测到APP未打开时才显示确认框
+                if (!appOpened) {
+                    if (confirm('似乎未能打开APP，是否前往下载页面？')) {
+                        window.location.href = downloadUrl;
+                    }
+                }
+            }, 2500); // 缩短检测时间，更快响应
+        }
+        
+        // 初始化页面
+        window.onload = function() {
+            initComments();
+        };
+    </script>
+</body>
+</html>
