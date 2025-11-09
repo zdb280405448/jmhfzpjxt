@@ -2,483 +2,1363 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>姐妹花脆皮炭炉鸡煲 - 评价窗口</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>姐妹花脆皮炭炉鸡煲 - 辅助评价系统</title>
     <style>
-        body {
-            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-        }
-        .header {
-            background-color: #e74c3c;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            min-height: 100vh;
-        }
-        .evaluation-container {
-            margin-bottom: 30px;
-        }
-        .evaluation-item {
-            background-color: #f8f9fa;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-        }
-        .evaluation-title {
-            color: #e74c3c;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .evaluation-textarea {
-            width: 100%;
-            min-height: 120px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            font-family: inherit;
-            resize: vertical;
             box-sizing: border-box;
         }
-        .action-buttons {
+        
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 15px;
+            position: relative;
+        }
+        
+        /* 背景装饰 */
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        /* 首次打开提示弹窗 */
+        .browser-tip-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
         }
-        .copy-btn, .modify-btn {
-            flex: 1;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        .copy-btn {
-            background-color: #3498db;
-            color: white;
-        }
-        .copy-btn:hover {
-            background-color: #2980b9;
-        }
-        .modify-btn {
-            background-color: #f39c12;
-            color: white;
-        }
-        .modify-btn:hover {
-            background-color: #e67e22;
-        }
-        .app-buttons {
-            margin-top: 30px;
+        
+        .browser-tip-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 20px;
             text-align: center;
+            width: 85%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
         }
-        .app-btn {
-            display: inline-block;
-            width: 200px;
-            margin: 10px;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
+        
+        .browser-tip-content p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .browser-tip-content button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
+            transition: transform 0.3s ease;
         }
-        #meituan-btn {
-            background-color: #FF3000;
+        
+        .browser-tip-content button:hover {
+            transform: scale(1.05);
         }
-        #meituan-btn:hover {
-            background-color: #d32f00;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        #douyin-btn {
-            background-color: #000000;
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-        #douyin-btn:hover {
-            background-color: #333333;
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.3;
         }
-        .success-message {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #27ae60;
+        
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background-color: #ff6b6b;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .shape-2 {
+            width: 250px;
+            height: 250px;
+            background-color: #4ecdc4;
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        /* 顶部商家信息 - 静态设计 */
+        .top-merchant-info {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 25px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 标题文字 - 静态设计 */
+        .merchant-title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 0;
+            display: inline-block;
+        }
+        
+        /* 导航区块 */
+        .nav-section {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .nav-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .nav-title {
+            background: rgba(0, 0, 0, 0.15);
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-title::before {
+            content: '→';
+            margin-right: 8px;
+            color: #fff;
+        }
+        
+        /* 按钮网格 */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+        
+        .square-button {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .square-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .square-button:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .button-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .button-text {
             font-size: 14px;
-            display: none;
+            color: rgba(0, 0, 0, 0.8);
+            font-weight: 500;
+        }
+        
+        /* 评价显示框 */
+        .evaluation-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .evaluation-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .evaluation-title {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            resize: vertical;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #333;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .evaluation-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-button {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin: 0 8px;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s ease;
+        }
+        
+        .action-button:hover::before {
+            left: 100%;
+        }
+        
+        .action-button.update {
+            background: linear-gradient(135deg, #007bff, #00bcd4);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .action-button:active {
+            transform: translateY(3px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .action-button:hover {
+            background: linear-gradient(135deg, #218838, #1ea076);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .action-button.update:hover {
+            background: linear-gradient(135deg, #0069d9, #00acc1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        }
+        
+        /* 评价按钮容器样式 */
+        .evaluation-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        /* 提示导航栏 */
+        .prompt-nav {
+            background: rgba(255, 243, 205, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 234, 167, 0.5);
+            color: rgba(133, 100, 4, 0.9);
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 团购按钮 */
+        .group-buy-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .group-button {
+            flex: 1;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .group-button.meituan {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.9), rgba(255, 71, 87, 0.9));
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .group-button.douyin {
+            background: linear-gradient(135deg, rgba(255, 36, 66, 0.9), rgba(247, 127, 0, 0.9));
+            box-shadow: 0 6px 20px rgba(255, 36, 66, 0.4);
+        }
+        
+        .group-button:active {
+            transform: scale(0.98);
+        }
+        
+        .group-button:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 1), rgba(255, 71, 87, 1));
+        }
+        
+        .group-button.douyin:hover {
+            background: linear-gradient(135deg, rgba(255, 36, 66, 1), rgba(247, 127, 0, 1));
+        }
+        
+        /* 其他导航 */
+        .other-section {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .other-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .wifi-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.9), rgba(9, 132, 227, 0.9));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+        }
+        
+        .wifi-button:active {
+            transform: scale(0.98);
+        }
+        
+        .wifi-button:hover {
+            background: linear-gradient(135deg, rgba(116, 185, 255, 1), rgba(9, 132, 227, 1));
+        }
+        
+        /* 底部声明 */
+        .footer {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            margin: 30px 0 15px;
+            padding: 15px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 复制成功提示 */
+        .copy-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(46, 204, 113, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 8px 32px rgba(46, 204, 113, 0.5);
             z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            transform: translate(-50%, -50%) scale(0.9);
+        }
+        
+        /* 备用下载提示已移除 */
+        
+        /* 复制成功动画 */
+        .copy-notification.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        /* 透明悬浮框提示样式 - 右上方位置 */
+        .photo-tip-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: #e74c3c; /* 红色文字 */
+            padding: 20px 25px;
+            border-radius: 15px;
+            font-size: 30px; /* 字体大小放大一倍 */
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: translate(100px, 0);
+            max-width: 85%;
+            line-height: 1.5;
+        }
+        
+        /* 透明悬浮框显示动画 */
+        .photo-tip-notification.show {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+        
+        /* 霓虹灯效果 */
+        .neon-glow {
+            animation: neonPulse 2s infinite alternate;
+        }
+        
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.7), 0 0 20px rgba(255, 255, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 30px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 255, 255, 0.6);
+            }
+        }
+        
+        /* 平滑过渡动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .top-merchant-info {
+                font-size: 20px;
+                padding: 20px 15px;
+            }
+            
+            .button-grid {
+                gap: 10px;
+                padding: 15px;
+            }
+            
+            .square-button {
+                padding: 15px 5px;
+            }
+            
+            .button-icon {
+                font-size: 24px;
+            }
+            
+            .button-text {
+                font-size: 13px;
+            }
+            
+            .group-buy-buttons {
+                gap: 10px;
+            }
+            
+            .group-button {
+                padding: 15px 10px;
+                font-size: 14px;
+            }
+        }
+        
+        /* 隐藏可能的搜索栏或浮动元素 */
+        #search, .search-bar, [id*="search"], [class*="search"], 
+        [id*="查找"], [class*="查找"], .float-search, #float-search,
+        [data-role="search"], .search-input, #search-input, .search-widget,
+        /* 隐藏所有固定定位在底部的元素 */
+        [style*="position:fixed"][style*="bottom:"],
+        /* 隐藏所有包含搜索图标或功能的元素 */
+        [class*="icon-search"], [id*="icon-search"],
+        /* 隐藏可能的第三方注入元素 */
+        .bdcs-container, .baidu-search, .sogou-search,
+        /* 隐藏可能的广告元素 */
+        .advertisement, .ad-container, .bottom-bar {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        姐妹花脆皮炭炉鸡煲 欢迎您的大驾光临
+    <!-- 背景装饰 -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+    </div>
+    
+    <!-- 备用下载提示已移除 -->
+    
+    <!-- 首次打开提示弹窗 -->
+    <div id="browserTipModal" class="browser-tip-modal">
+        <div class="browser-tip-content">
+            <p>请点击右上角...选择在浏览器中打开</p>
+            <button onclick="closeBrowserTip()">我知道了</button>
+        </div>
     </div>
     
     <div class="container">
-        <h2 style="text-align: center; color: #e74c3c; margin-bottom: 30px;">请对我们的菜品进行评价</h2>
+        <!-- 顶部商家信息 -->
+        <div class="top-merchant-info fade-in-up">
+            <h1 class="merchant-title">姐妹花脆皮炭炉鸡煲</h1>
+        </div>
         
-        <div class="evaluation-container">
-            <div class="evaluation-item">
-                <div class="evaluation-title">脆皮鸡评价</div>
-                <textarea id="crispy-chicken-comment" class="evaluation-textarea" placeholder="请输入您对脆皮鸡的评价..."></textarea>
-                <div class="action-buttons">
-                    <button class="copy-btn" onclick="copyToClipboard('crispy-chicken-comment')">复制评价</button>
-                    <button class="modify-btn" onclick="focusTextarea('crispy-chicken-comment')">修改评价</button>
-                </div>
+        <!-- 点评参考栏 -->
+        <div class="nav-section fade-in-up">
+            <div class="nav-title">点评参考</div>
+            <div class="button-grid">
+                <button class="square-button" onclick="toggleEvaluation('crispyChicken')" style="height: auto; min-height: 100px; width: auto; min-width: 120px;">
+                    <div class="button-icon" style="background: #ff4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">脆皮鸡</div>
+                    <div class="button-text">脆皮鸡评价</div>
+                </button>
+                <button class="square-button" onclick="toggleEvaluation('mushroomChicken')" style="height: auto; min-height: 100px; width: auto; min-width: 120px;">
+                    <div class="button-icon" style="background: #4ecdc4; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">香菌鸡</div>
+                    <div class="button-text">五指香菌鸡评价</div>
+                </button>
             </div>
-            
-            <div class="evaluation-item">
-                <div class="evaluation-title">五指香菌鸡评价</div>
-                <textarea id="mushroom-chicken-comment" class="evaluation-textarea" placeholder="请输入您对五指香菌鸡的评价..."></textarea>
-                <div class="action-buttons">
-                    <button class="copy-btn" onclick="copyToClipboard('mushroom-chicken-comment')">复制评价</button>
-                    <button class="modify-btn" onclick="focusTextarea('mushroom-chicken-comment')">修改评价</button>
+        </div>
+        
+        <!-- 脆皮鸡评价导航 -->
+        <div id="crispyChickenSection" class="nav-section fade-in-up" style="display: none; text-align: left;">
+            <div class="nav-title">脆皮鸡评价</div>
+            <div class="evaluation-container" style="text-align: left;">
+                <textarea id="crispyChickenEvaluation" placeholder="评价内容将显示在这里..." style="width: 100%; max-width: 600px;"></textarea>
+                <div class="evaluation-buttons" style="display: inline-block;">
+                    <button class="action-button update" onclick="updateEvaluation('crispyChicken')">评价更新</button>
+                    <button class="action-button" onclick="copyEvaluation('crispyChicken')">复制分享</button>
                 </div>
             </div>
         </div>
         
-        <div class="app-buttons">
-            <h3 style="text-align: center; color: #555; margin-bottom: 20px;">分享到以下平台</h3>
-            <button class="app-btn" id="meituan-btn" onclick="openApp('meituan')">打开美团</button>
-            <button class="app-btn" id="douyin-btn" onclick="openApp('douyin')">打开抖音</button>
+        <!-- 五指香菌鸡评价导航 -->
+        <div id="mushroomChickenSection" class="nav-section fade-in-up" style="display: none; text-align: left;">
+            <div class="nav-title">五指香菌鸡评价</div>
+            <div class="evaluation-container" style="text-align: left;">
+                <textarea id="mushroomChickenEvaluation" placeholder="评价内容将显示在这里..." style="width: 100%; max-width: 600px;"></textarea>
+                <div class="evaluation-buttons" style="display: inline-block;">
+                    <button class="action-button update" onclick="updateEvaluation('mushroomChicken')">评价更新</button>
+                    <button class="action-button" onclick="copyEvaluation('mushroomChicken')">复制分享</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 点评打卡导航 -->
+        <div class="nav-section fade-in-up">
+            <div class="nav-title">点评打卡</div>
+            <div class="button-grid">
+                <button class="square-button" onclick="openBusinessLink('xiaohongshu')">
+                    <div class="button-icon" style="background: #ff0000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">小红书</div>
+                    <div class="button-text">小红书笔记</div>
+                </button>
+                <button class="square-button" onclick="openBusinessLink('douyinGroup')">
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                    <div class="button-text">抖音点评</div>
+                </button>
+                <button class="square-button" onclick="openBusinessLink('meituanGroup')">
+                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 12px;">美团</div>
+                    <div class="button-text">美团点评</div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 发视频导航 -->
+        <div class="nav-section fade-in-up">
+            <div class="nav-title">发视频</div>
+            <div class="button-grid">
+                <button class="square-button" onclick="shareToPlatform('douyin')">
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                    <div class="button-text">发抖音</div>
+                </button>
+                <button class="square-button" onclick="shareToPlatform('xiaohongshu')">
+                    <div class="button-icon" style="background: #ff0000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">小红书</div>
+                    <div class="button-text">发小红书</div>
+                </button>
+                <button class="square-button" onclick="shareToPlatform('kuaishou')">
+                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 10px;">发快手</div>
+                    <div class="button-text">发快手</div>
+                </button>
+            </div>
+        </div>
+        
+
+        
+        <!-- 商家团购导航 -->
+        <div class="nav-section fade-in-up">
+            <div class="nav-title">商家团购</div>
+            <div class="button-grid">
+                <button class="square-button" onclick="openBusinessLink('meituanGroup')">
+                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 12px;">美团</div>
+                    <div class="button-text">美团团购</div>
+                </button>
+                <button class="square-button" onclick="openApp('douyin')">
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                    <div class="button-text">抖音团购</div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 其他导航 -->
+        <div class="nav-section fade-in-up">
+            <div class="nav-title">其他</div>
+            <div class="button-grid">
+                <button class="square-button" onclick="connectWifi()">
+                    <div class="button-icon" style="background: #2196f3; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">📶</div>
+                    <div class="button-text">连接Wifi</div>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 底部声明 -->
+        <div class="footer fade-in-up">
+            本产品如使用其他企业、组织的品牌名、商标、LOGO，仅用于客观说明产品的功能及适用场景，旨在帮助用户更好的了解产品的使用价值，无任何恶意，不构成对相关品牌的背书、关联或混淆，相关权利均归原权利人所有，如涉及侵权问题，请及时联系我们，我们将立即采取措施予以纠正。
         </div>
     </div>
     
-    <div class="success-message" id="success-message">
-        评价已复制到剪贴板！
-    </div>
-
+    <!-- 复制成功提示 -->
+    <div class="copy-notification" id="copyNotification">复制成功！</div>
+<div class="photo-tip-notification" id="photoTipNotification">您的文采非常优秀，但是还需要配上三张美照才算完美，赶快去拍照展示您的旷世才华吧！</div>
+    
     <script>
-        // 评价内容库 - 自然融入味道、环境、服务三个方面
-        const crispyChickenComments = [
-            "现切现涮的脆皮鸡脆嫩可口，锅底香气十足，店员们热情周到，上菜速度快，店内环境干净整洁，炭炉火锅的氛围很温馨，整体体验非常好！",
-            "姐妹们的脆皮鸡真是名不虚传，鸡肉新鲜紧实，口感脆嫩多汁，蘸料也很美味。店面装修简约大方，座位舒适安静，服务员态度亲切，会主动加水换碟，细节做得很到位。",
-            "这家的脆皮鸡太好吃了！肉质脆嫩有嚼劲，汤底越煮越香。店内通风很好，没有火锅的闷热感，卫生状况也不错。老板很热情，会详细介绍菜品和推荐吃法，服务很专业。",
-            "现切鸡肉新鲜度很好，炭炉烹饪锁住了肉汁，味道丰富有层次。位置好找停车方便，店内布局合理空间宽敞，用餐环境舒适。店员反应迅速，需求响应及时，服务体验很满意。",
-            "脆皮鸡是他们家的特色，外脆里嫩配合秘制蘸料非常美味，锅底清淡不油腻。店面虽不大但温馨舒适，装修有特色很适合朋友小聚。从点餐到用餐全程服务贴心，体验感很好。"
+        // 切换评价板块显示/隐藏
+        function toggleEvaluation(type) {
+            // 隐藏所有评价板块
+            document.getElementById('crispyChickenSection').style.display = 'none';
+            document.getElementById('mushroomChickenSection').style.display = 'none';
+            
+            // 显示选中的评价板块
+            const sectionId = type === 'crispyChicken' ? 'crispyChickenSection' : 'mushroomChickenSection';
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // 滚动到显示的板块
+            setTimeout(() => {
+                document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+        
+        // 脆皮鸡评价内容库
+        let crispyChickenComments = [
+            "姐妹花家的脆皮鸡火锅真是太赞了！鸡肉是现切现涮的，吃起来肉质脆嫩有嚼劲，完全不会老。汤底浓郁鲜美，环境干净整洁，服务态度也很好，服务员热情周到。强烈推荐大家来尝试，绝对不会失望！",
+            "第一次来姐妹花脆皮炭炉鸡煲，果然名不虚传。脆皮鸡现点现切，涮煮后肉质脆嫩可口，配上特制酱料更是美味。店内环境温馨舒适，服务人员态度热情，用餐体验非常好。五星好评！",
+            "这家店的脆皮鸡火锅太好吃了！鸡肉切得很薄，现切线涮，吃起来口感脆嫩，很有特色。汤底也很鲜美，食材新鲜。环境整洁，服务周到，价格实惠，性价比很高。会经常来的！",
+            "姐妹花脆皮炭炉鸡煲的鸡肉真是绝了！现切的薄片，涮煮后肉质脆嫩，完全不像普通鸡肉那样老柴。环境干净，服务热情，推荐大家来品尝，绝对是火锅的新体验！",
+            "强烈推荐姐妹花的脆皮鸡火锅！鸡肉现切现涮，肉质脆嫩有弹性，口感非常特别。汤底鲜美，环境舒适，服务贴心。和朋友聚餐的好去处，值得一试！",
+            "来姐妹花吃脆皮鸡火锅是朋友推荐的，果然没有失望。鸡肉现切现涮，肉质脆嫩可口，汤底也很美味。店内环境整洁，服务人员态度很好，整体用餐体验很棒。",
+            "姐妹花脆皮炭炉鸡煲的鸡肉太好吃了！现切现涮，肉质脆嫩，完全没有普通鸡肉的柴感。环境不错，服务也很到位，价格合理。已经是第二次来了，以后还会再来！",
+            "这家店的脆皮鸡火锅很有特色，鸡肉现切现涮，肉质脆嫩有嚼劲，配上特制酱料简直完美。环境干净整洁，服务热情周到，是朋友聚会的好选择。",
+            "姐妹花的脆皮鸡真是太赞了！现切现涮，肉质脆嫩可口，完全颠覆了我对鸡肉口感的认知。环境舒适，服务贴心，下次还会带更多朋友来品尝！",
+            "第一次尝试脆皮鸡火锅，选择了姐妹花家，果然没有选错。鸡肉现切现涮，肉质脆嫩，汤底鲜美。店内环境整洁，服务热情，价格合理，值得推荐！"
         ];
         
-        const mushroomChickenComments = [
-            "五指香菌鸡汤鲜美醇厚，菌菇香气浓郁，鸡肉炖得软烂入味。店内干净整洁，座位舒适，环境安静适合用餐。服务员热情好客，介绍菜品详细，上菜速度快，服务态度很好。",
-            "菌菇种类丰富新鲜，鸡汤熬制得恰到好处，鲜香不油腻回味无穷。店面装修雅致，灯光温馨营造出舒适的用餐氛围。店员态度友善，会主动为顾客添加茶水，服务细致周到很贴心。",
-            "五指香菌鸡真的很棒，菌菇与鸡肉的搭配相得益彰，汤头浓郁鲜美。位置便利，店内宽敞明亮，通风良好没有异味，用餐环境舒适。老板很热情，会根据人数推荐合适的分量，服务很贴心。",
-            "菌菇鸡汤口感醇厚，每一口都充满鲜香，鸡肉嫩滑多汁。店内布置温馨，桌椅整洁，卫生状况良好。店员动作麻利，点餐系统先进，整体服务效率高，体验不错。",
-            "五指香菌鸡太美味了，菌菇的鲜香和鸡肉的鲜嫩完美融合，汤底清澈但滋味十足。店面虽小但精致，装饰有特色，用餐环境安静舒适。服务员专业且热情，提供的用餐建议很实用。"
+        // 五指香菌鸡评价内容库
+        let mushroomChickenComments = [
+            "姐妹花家的五指香菌鸡汤真是鲜美无比！菌菇种类丰富，香气浓郁，鸡肉鲜嫩多汁，汤底醇厚可口。店内环境优雅舒适，服务人员态度热情周到。这是我喝过最好喝的菌菇鸡汤，强烈推荐大家来尝尝！",
+            "来姐妹花吃五指香菌鸡，真是太满足了！菌菇的鲜香和鸡肉的鲜嫩完美融合，汤底浓郁鲜美，喝了回味无穷。环境干净整洁，服务贴心周到，用餐体验非常好。",
+            "姐妹花的五指香菌鸡汤真的太好喝了！菌菇新鲜，种类多样，鸡肉炖得恰到好处，汤底香浓可口，喝了让人回味无穷。店内环境舒适，服务热情，价格合理，性价比很高。",
+            "推荐姐妹花脆皮炭炉鸡煲的五指香菌鸡！菌菇香气扑鼻，鸡肉鲜嫩多汁，汤底醇厚鲜美，营养丰富。店内环境优雅，服务周到，是家人聚餐的好去处。",
+            "五指香菌鸡是姐妹花的招牌菜，果然名不虚传！菌菇的鲜香和鸡肉的鲜嫩完美结合，汤底浓郁可口。店内环境舒适，服务热情，用餐体验很棒，值得一来再来！",
+            "姐妹花的五指香菌鸡汤非常好喝，菌菇种类丰富，鸡肉鲜嫩，汤底香浓。店内环境整洁，服务人员态度很好，价格也很合理。强烈推荐给喜欢菌菇汤的朋友们！",
+            "来姐妹花吃五指香菌鸡，真是一次愉快的用餐体验！菌菇新鲜，鸡肉嫩滑，汤底鲜美浓郁。店内环境温馨，服务周到，是朋友聚会的好地方。",
+            "姐妹花家的五指香菌鸡汤太鲜美了！菌菇的香气和鸡肉的鲜味完美融合，汤底浓厚，喝了让人回味无穷。环境干净整洁，服务热情，下次还会再来！",
+            "推荐大家来姐妹花品尝五指香菌鸡！菌菇种类多样，鸡肉鲜嫩，汤底香浓可口。店内环境优雅，服务贴心，价格合理，是周末聚餐的好去处。",
+            "姐妹花的五指香菌鸡汤真的很赞！菌菇新鲜，鸡肉嫩滑，汤底鲜美，喝了整个人都舒服了。店内环境舒适，服务热情，强烈推荐给大家！"
         ];
         
-        // 随机选择评价内容
-        function getRandomComment(comments) {
-            return comments[Math.floor(Math.random() * comments.length)];
-        }
-        
-        // 初始化评价内容
-        function initComments() {
-            document.getElementById('crispy-chicken-comment').value = getRandomComment(crispyChickenComments);
-            document.getElementById('mushroom-chicken-comment').value = getRandomComment(mushroomChickenComments);
-        }
-        
-        // 复制评价到剪贴板
-        function copyToClipboard(elementId) {
-            const textarea = document.getElementById(elementId);
-            textarea.select();
-            textarea.setSelectionRange(0, 99999); // 兼容移动设备
+        // 获取随机评价内容
+        function getRandomComment(type) {
+            let comments = type === 'crispyChicken' ? crispyChickenComments : mushroomChickenComments;
             
-            try {
-                document.execCommand('copy');
-                
-                // 显示成功消息
-                const successMessage = document.getElementById('success-message');
-                successMessage.style.display = 'block';
-                
-                // 3秒后隐藏消息
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            } catch (err) {
-                alert('复制失败，请手动复制评价内容');
-            }
-        }
-        
-        // 聚焦到文本框进行修改
-        function focusTextarea(elementId) {
-            const textarea = document.getElementById(elementId);
-            textarea.focus();
-        }
-        
-        // 打开应用
-        function openApp(appName) {
-            // APP打开状态标志
-            let appOpened = false;
-            
-            // 增加页面隐藏检测
-            const beforeHiddenTime = Date.now();
-            
-            // 添加页面可见性变化监听来检测APP是否成功打开
-            document.addEventListener('visibilitychange', handleVisibilityChange);
-            
-            function handleVisibilityChange() {
-                // 如果页面变为隐藏，说明可能成功打开了APP
-                if (document.hidden) {
-                    // 检查时间差，排除页面切换等情况
-                    const hiddenTime = Date.now() - beforeHiddenTime;
-                    if (hiddenTime < 3000) { // 3秒内隐藏视为APP打开
-                        appOpened = true;
-                    }
-                    // 移除事件监听
-                    document.removeEventListener('visibilitychange', handleVisibilityChange);
-                }
-            }
-            
-            // 针对不同版本抖音的URL Schemes
-            const schemes = {
-                meituan: 'imeituan://',
-                // 抖音主Scheme
-                douyin: 'douyin://'
-            };
-            
-            // 备用打开方式 - 增加不同抖音版本和平台的URL Schemes
-            const alternativeSchemes = {
-                douyin: [
-                    // 标准版抖音
-                    'snssdk1128://',
-                    // 国际版TikTok
-                    'tiktok://',
-                    'tiktoklite://',
-                    // 不同SDK版本
-                    'snssdk1112://',
-                    'snssdk1140://',
-                    'snssdk1233://',
-                    // 极速版
-                    'douyinlite://',
-                    // Aweme底层框架
-                    'aweme://',
-                    // 企业版
-                    'douyinpro://'
-                ]
-            };
-            
-            // 更新下载链接，使用更通用的下载页面
-            const downloadUrls = {
-                meituan: 'https://apps.apple.com/cn/app/id423084029',
-                douyin: 'https://www.douyin.com/download'
-            };
-            
-            const scheme = schemes[appName];
-            const downloadUrl = downloadUrls[appName];
-            const altSchemes = alternativeSchemes[appName] || [];
-            
-            // 抖音专用打开策略 - 针对手机端优化的多策略方案
-            if (appName === 'douyin') {
-                // 增加更多可能的scheme，特别是适合移动端的
-                const allSchemes = [
-                    // 标准scheme
-                    'douyin://',
-                    'snssdk1128://',
-                    // 移动端常用scheme
-                    'snssdk1112://',
-                    'snssdk1140://',
-                    'snssdk1233://',
-                    'snssdk1433://',
-                    'snssdk1423://',
-                    'snssdk157://',
-                    // 抖音极速版
-                    'douyinlite://',
-                    'snssdk2133://',
-                    // TikTok国际版
-                    'tiktok://',
-                    'tiktoklite://',
-                    // 底层框架
-                    'aweme://',
-                    // 企业版
-                    'douyinpro://',
-                    // 抖音火山版
-                    'huoshan://',
-                    // 内部版本scheme
-                    'snssdk1180://',
-                    'snssdk1200://',
-                    'snssdk1241://',
-                    'snssdk1299://',
-                    'snssdk1300://',
-                    // 直播相关
-                    'douyinlive://'
-                ];
-                
-                // 检测是否为移动设备
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                
-                // 移动设备优化：使用更激进的打开策略
-                if (isMobile) {
-                    console.log('检测到移动设备，使用移动端优化策略');
-                    
-                    // 1. 创建专门的移动设备尝试函数
-                    function tryMobileOpen(url, delay = 0) {
-                        setTimeout(() => {
-                            if (!appOpened) {
-                                try {
-                                    console.log(`移动端尝试打开: ${url}`);
-                                    
-                                    // 对于移动设备，同时尝试多种方法
-                                    // a. 尝试使用iframe (某些浏览器允许)
-                                    tryIframeOpen(url);
-                                    
-                                    // b. 直接设置location.href
-                                    window.location.href = url;
-                                    
-                                    // c. 对于iOS，尝试使用document.createElement('a')方法
-                                    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                                        const a = document.createElement('a');
-                                        a.href = url;
-                                        a.style.display = 'none';
-                                        document.body.appendChild(a);
-                                        // 使用合成点击事件
-                                        const event = document.createEvent('MouseEvent');
-                                        event.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-                                        a.dispatchEvent(event);
-                                        setTimeout(() => document.body.removeChild(a), 100);
-                                    }
-                                } catch (e) {
-                                    console.error(`移动端打开失败:`, e);
-                                }
-                            }
-                        }, delay);
-                    }
-                    
-                    // 立即尝试主要的scheme
-                    tryMobileOpen(scheme, 0);
-                    
-                    // 快速并行尝试前5个最常用的scheme
-                    const topSchemes = allSchemes.slice(0, 5);
-                    topSchemes.forEach((s, i) => {
-                        if (s !== scheme) {
-                            tryMobileOpen(s, 50 * (i + 1));
-                        }
-                    });
-                    
-                    // 然后顺序尝试其他scheme，使用递增的延迟
-                    allSchemes.slice(5).forEach((s, i) => {
-                        tryMobileOpen(s, 300 + (i * 100));
-                    });
-                    
-                    // 移动设备上额外的备用方案：直接跳转到抖音网页版分享页面
-                    setTimeout(() => {
-                        if (!appOpened) {
-                            console.log('尝试跳转抖音网页版');
-                            // 使用抖音网页版的分享页面，可能会引导用户打开APP
-                            window.location.href = 'https://www.douyin.com/?share_from_web_id=xxx';
-                        }
-                    }, 1500);
+            if (comments.length === 0) {
+                // 如果评价内容用完了，重新初始化
+                if (type === 'crispyChicken') {
+                    initializeCrispyChickenComments();
+                    comments = crispyChickenComments;
                 } else {
-                    // 桌面设备使用原来的策略
-                    // 1. 立即使用window.open方式打开主scheme
-                    try {
-                        const newWindow = window.open(scheme, '_blank');
-                        setTimeout(() => {
-                            if (newWindow && !newWindow.closed) {
-                                newWindow.close();
-                            }
-                        }, 1000);
-                    } catch (e) {
-                        console.error('window.open失败:', e);
-                    }
-                    
-                    // 2. 同时使用window.location.href尝试
-                    try {
-                        window.location.href = scheme;
-                    } catch (e) {
-                        console.error('直接跳转失败:', e);
-                    }
-                    
-                    // 3. 立即尝试iframe打开
-                    tryIframeOpen(scheme);
-                    
-                    // 4. 尝试备用scheme
-                    allSchemes.forEach((altScheme, index) => {
-                        if (altScheme !== scheme) {
-                            setTimeout(() => {
-                                if (!appOpened) {
-                                    try {
-                                        console.log(`尝试备用scheme: ${altScheme}`);
-                                        window.location.href = altScheme;
-                                    } catch (e) {
-                                        console.error(`备用scheme失败:`, e);
-                                    }
-                                }
-                            }, 100 * (index + 1));
-                        }
-                    });
+                    initializeMushroomChickenComments();
+                    comments = mushroomChickenComments;
                 }
+            }
+            
+            const randomIndex = Math.floor(Math.random() * comments.length);
+            return comments[randomIndex];
+        }
+        
+        // 重新初始化脆皮鸡评价
+        function initializeCrispyChickenComments() {
+            crispyChickenComments = [
+                "姐妹花家的脆皮鸡火锅真是太赞了！鸡肉是现切现涮的，吃起来肉质脆嫩有嚼劲，完全不会老。汤底浓郁鲜美，环境干净整洁，服务态度也很好，服务员热情周到。强烈推荐大家来尝试，绝对不会失望！",
+                "第一次来姐妹花脆皮炭炉鸡煲，果然名不虚传。脆皮鸡现点现切，涮煮后肉质脆嫩可口，配上特制酱料更是美味。店内环境温馨舒适，服务人员态度热情，用餐体验非常好。五星好评！",
+                "这家店的脆皮鸡火锅太好吃了！鸡肉切得很薄，现切线涮，吃起来口感脆嫩，很有特色。汤底也很鲜美，食材新鲜。环境整洁，服务周到，价格实惠，性价比很高。会经常来的！",
+                "姐妹花脆皮炭炉鸡煲的鸡肉真是绝了！现切的薄片，涮煮后肉质脆嫩，完全不像普通鸡肉那样老柴。环境干净，服务热情，推荐大家来品尝，绝对是火锅的新体验！",
+                "强烈推荐姐妹花的脆皮鸡火锅！鸡肉现切现涮，肉质脆嫩有弹性，口感非常特别。汤底鲜美，环境舒适，服务贴心。和朋友聚餐的好去处，值得一试！",
+                "来姐妹花吃脆皮鸡火锅是朋友推荐的，果然没有失望。鸡肉现切现涮，肉质脆嫩可口，汤底也很美味。店内环境整洁，服务人员态度很好，整体用餐体验很棒。",
+                "姐妹花脆皮炭炉鸡煲的鸡肉太好吃了！现切现涮，肉质脆嫩，完全没有普通鸡肉的柴感。环境不错，服务也很到位，价格合理。已经是第二次来了，以后还会再来！",
+                "这家店的脆皮鸡火锅很有特色，鸡肉现切现涮，肉质脆嫩有嚼劲，配上特制酱料简直完美。环境干净整洁，服务热情周到，是朋友聚会的好选择。",
+                "姐妹花的脆皮鸡真是太赞了！现切现涮，肉质脆嫩可口，完全颠覆了我对鸡肉口感的认知。环境舒适，服务贴心，下次还会带更多朋友来品尝！",
+                "第一次尝试脆皮鸡火锅，选择了姐妹花家，果然没有选错。鸡肉现切现涮，肉质脆嫩，汤底鲜美。店内环境整洁，服务热情，价格合理，值得推荐！"
+            ];
+        }
+        
+        // 重新初始化五指香菌鸡评价
+        function initializeMushroomChickenComments() {
+            mushroomChickenComments = [
+                "姐妹花家的五指香菌鸡汤真是鲜美无比！菌菇种类丰富，香气浓郁，鸡肉鲜嫩多汁，汤底醇厚可口。店内环境优雅舒适，服务人员态度热情周到。这是我喝过最好喝的菌菇鸡汤，强烈推荐大家来尝尝！",
+                "来姐妹花吃五指香菌鸡，真是太满足了！菌菇的鲜香和鸡肉的鲜嫩完美融合，汤底浓郁鲜美，喝了回味无穷。环境干净整洁，服务贴心周到，用餐体验非常好。",
+                "姐妹花的五指香菌鸡汤真的太好喝了！菌菇新鲜，种类多样，鸡肉炖得恰到好处，汤底香浓可口，喝了让人回味无穷。店内环境舒适，服务热情，价格合理，性价比很高。",
+                "推荐姐妹花脆皮炭炉鸡煲的五指香菌鸡！菌菇香气扑鼻，鸡肉鲜嫩多汁，汤底醇厚鲜美，营养丰富。店内环境优雅，服务周到，是家人聚餐的好去处。",
+                "五指香菌鸡是姐妹花的招牌菜，果然名不虚传！菌菇的鲜香和鸡肉的鲜嫩完美结合，汤底浓郁可口。店内环境舒适，服务热情，用餐体验很棒，值得一来再来！",
+                "姐妹花的五指香菌鸡汤非常好喝，菌菇种类丰富，鸡肉鲜嫩，汤底香浓。店内环境整洁，服务人员态度很好，价格也很合理。强烈推荐给喜欢菌菇汤的朋友们！",
+                "来姐妹花吃五指香菌鸡，真是一次愉快的用餐体验！菌菇新鲜，鸡肉嫩滑，汤底鲜美浓郁。店内环境温馨，服务周到，是朋友聚会的好地方。",
+                "姐妹花家的五指香菌鸡汤太鲜美了！菌菇的香气和鸡肉的鲜味完美融合，汤底浓厚，喝了让人回味无穷。环境干净整洁，服务热情，下次还会再来！",
+                "推荐大家来姐妹花品尝五指香菌鸡！菌菇种类多样，鸡肉鲜嫩，汤底香浓可口。店内环境优雅，服务贴心，价格合理，是周末聚餐的好去处。",
+                "姐妹花的五指香菌鸡汤真的很赞！菌菇新鲜，鸡肉嫩滑，汤底鲜美，喝了整个人都舒服了。店内环境舒适，服务热情，强烈推荐给大家！"
+            ];
+        }
+        
+        // 更新评价内容
+        function updateEvaluation(type) {
+            const textareaId = type === 'crispyChicken' ? 'crispyChickenEvaluation' : 'mushroomChickenEvaluation';
+            const textarea = document.getElementById(textareaId);
+            const newComment = getRandomComment(type);
+            
+            // 添加渐入动画
+            textarea.style.opacity = '0';
+            setTimeout(() => {
+                textarea.value = newComment;
+                textarea.style.opacity = '1';
+            }, 200);
+        }
+        
+        // 复制评价内容
+function copyEvaluation(type) {
+    try {
+        // 获取对应的textarea元素
+        const textareaId = type === 'crispyChicken' ? 'crispyChickenEvaluation' : 'mushroomChickenEvaluation';
+        const textarea = document.getElementById(textareaId);
+        const text = textarea.value;
+        
+        // 使用Clipboard API尝试复制文本（优先方法）
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                // 显示复制成功提示
+                showCopyNotification();
+                
+                // 从数组中删除已使用的评价
+                const commentToRemove = text;
+                const comments = type === 'crispyChicken' ? crispyChickenComments : mushroomChickenComments;
+                const index = comments.indexOf(commentToRemove);
+                
+                if (index > -1) {
+                    comments.splice(index, 1);
+                }
+                
+                // 自动更新为新的评价内容
+                setTimeout(() => {
+                    updateEvaluation(type);
+                }, 1500);
+            }).catch(err => {
+                console.error('Clipboard API复制失败，尝试回退方案:', err);
+                // 如果Clipboard API失败，使用回退方案
+                fallbackCopyText(text, textarea);
+            });
+        } else {
+            // 如果不支持Clipboard API，直接使用回退方案
+            fallbackCopyText(text, textarea);
+        }
+    } catch (err) {
+        console.error('复制过程发生错误:', err);
+        alert('复制失败，请手动选择并复制文本');
+    }
+}
+
+// 回退复制方案函数
+function fallbackCopyText(text, textarea) {
+    try {
+        // 创建临时textarea元素，避免原textarea获得焦点
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = text;
+        tempTextarea.style.position = 'fixed';
+        tempTextarea.style.left = '-999999px';
+        tempTextarea.style.top = '-999999px';
+        tempTextarea.readOnly = true;
+        document.body.appendChild(tempTextarea);
+        
+        // 选中文本但不触发焦点
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.selectNodeContents(tempTextarea);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        // 尝试复制
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (err) {
+            console.error('execCommand复制失败:', err);
+        }
+        
+        // 清理选择
+        selection.removeAllRanges();
+        
+        // 清理临时元素
+        document.body.removeChild(tempTextarea);
+        
+        if (successful) {
+            // 显示复制成功提示
+            showCopyNotification();
+            
+            // 从数组中删除已使用的评价
+            const type = textarea.id === 'crispyChickenEvaluation' ? 'crispyChicken' : 'mushroomChicken';
+            const commentToRemove = text;
+            const comments = type === 'crispyChicken' ? crispyChickenComments : mushroomChickenComments;
+            const index = comments.indexOf(commentToRemove);
+            
+            if (index > -1) {
+                comments.splice(index, 1);
+            }
+            
+            // 自动更新为新的评价内容
+            setTimeout(() => {
+                updateEvaluation(type);
+            }, 1500);
+        } else {
+            // 如果回退方案也失败，显示错误提示
+            alert('复制失败，请手动选择并复制文本');
+        }
+    } catch (err) {
+        console.error('复制文本失败:', err);
+        alert('复制失败，请手动选择并复制文本');
+    }
+}
+        
+        // 显示复制成功提示
+        function showCopyNotification() {
+            const notification = document.getElementById('copyNotification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                
+                // 复制成功提示消失后，显示透明悬浮框提示
+                setTimeout(() => {
+                    showPhotoTipNotification();
+                }, 300);
+            }, 2000);
+        }
+        
+        // 显示透明悬浮框提示
+        function showPhotoTipNotification(customMessage = null) {
+            const tipNotification = document.getElementById('photoTipNotification');
+            
+            // 如果提供了自定义消息，则使用自定义消息
+            if (customMessage) {
+                tipNotification.textContent = customMessage;
             } else {
-                // 美团等其他APP使用直接打开方式
+                // 否则使用默认消息
+                tipNotification.textContent = '您的文采非常优秀，但是还需要配上三张美照才算完美，赶快去拍照展示您的旷世才华吧！';
+            }
+            
+            tipNotification.classList.add('show');
+            
+            // 10秒后自动隐藏提示（延长了5秒）
+            setTimeout(() => {
+                tipNotification.classList.remove('show');
+            }, 10000);
+        }
+        
+        // 检测是否在浏览器中打开
+        function isInBrowser() {
+            // 检测常见的内置浏览器环境
+            const userAgent = navigator.userAgent.toLowerCase();
+            
+            // 检测微信内置浏览器 - 使用更精确的匹配
+            if (/micromessenger\/([\d.]+)/.test(userAgent)) {
+                return false;
+            }
+            
+            // 检测支付宝内置浏览器
+            if (/alipayclient\/([\d.]+)/.test(userAgent)) {
+                return false;
+            }
+            
+            // 检测QQ内置浏览器 - 避免误判正常浏览器
+            if (/qq\/([\d.]+)\s+mobile\s+safari/i.test(userAgent) || /qqbrowser/i.test(userAgent)) {
+                return false;
+            }
+            
+            // 检测其他可能的内置浏览器环境
+            const isWeChatMiniProgram = window.__wxjs_environment === 'miniprogram';
+            
+            // 优化WebView检测，避免误判
+            const isWebView = /\bwv\b/.test(userAgent) || 
+                           (/iphone|ipad|ipod/i.test(userAgent) && /applewebkit/i.test(userAgent) && !/safari/i.test(userAgent)) ||
+                           (/android/i.test(userAgent) && /applewebkit/i.test(userAgent) && !/chrome\//i.test(userAgent));
+            
+            return !(isWeChatMiniProgram || isWebView);
+        }
+        
+        // 完全重写的打开App函数 - 支持多个URL Scheme尝试
+        function openApp(appName) {
+            // 检测是否在浏览器中打开
+            if (!isInBrowser()) {
+                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
+                return;
+            }
+            
+            // 应用的URL Scheme列表 - 为抖音提供多个可能的Scheme
+            const schemeLists = {
+                meituan: ['imeituan://', 'mtapp://', 'meituanapp://'],
+                douyin: ['douyin://', 'snssdk1128://', 'aweme://']
+            };
+            
+            const schemes = schemeLists[appName];
+            
+            if (!schemes || !schemes.length) {
+                console.error('未知的应用名称:', appName);
+                return;
+            }
+            
+            // 尝试打开应用的函数
+            function attemptOpen(scheme) {
+                console.log('尝试打开:', scheme);
+                
+                // 1. 直接使用location.href
                 try {
                     window.location.href = scheme;
                 } catch (e) {
-                    console.error('直接跳转失败:', e);
+                    console.error('location.href失败:', e);
                 }
-            }
-            
-            // 尝试使用iframe打开APP
-            function tryIframeOpen(url) {
+                
+                // 2. 使用a标签
                 try {
-                    const iframe = document.createElement('iframe');
-                    iframe.src = url;
-                    iframe.style.display = 'none';
-                    iframe.style.border = 'none';
-                    iframe.style.width = '0';
-                    iframe.style.height = '0';
-                    document.body.appendChild(iframe);
+                    const link = document.createElement('a');
+                    link.href = scheme;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
                     
                     setTimeout(() => {
                         try {
-                            document.body.removeChild(iframe);
-                        } catch (err) {
-                            console.log('移除iframe时出错:', err);
-                        }
-                    }, 1000);
+                            if (link.parentNode) {
+                                document.body.removeChild(link);
+                            }
+                        } catch (ignore) {}
+                    }, 10);
                 } catch (e) {
-                    console.error('iframe打开失败:', e);
+                    console.error('a标签失败:', e);
                 }
             }
             
-            // 设置备用方案 - 只在确定APP没有打开时显示
-            setTimeout(() => {
-                // 移除事件监听
-                document.removeEventListener('visibilitychange', handleVisibilityChange);
+            // 尝试第一个scheme（最常用的）
+            attemptOpen(schemes[0]);
+            
+            // 对于抖音，额外尝试其他可能的scheme
+            if (appName === 'douyin' && schemes.length > 1) {
+                // 轻微延迟后尝试第二个scheme
+                setTimeout(() => attemptOpen(schemes[1]), 50);
                 
-                // 只有当检测到APP未打开时才显示确认框
-                if (!appOpened) {
-                    if (confirm('似乎未能打开APP，是否前往下载页面？')) {
-                        window.location.href = downloadUrl;
-                    }
-                }
-            }, 2500); // 缩短检测时间，更快响应
+                // 再延迟一点尝试第三个scheme
+                setTimeout(() => attemptOpen(schemes[2]), 100);
+            }
         }
         
-        // 初始化页面
+        // 页面加载时检查是否有待打开的应用
+        window.addEventListener('load', function() {
+            // 延迟检查，确保页面完全加载
+            setTimeout(() => {
+                const pendingApp = localStorage.getItem('pendingAppToOpen');
+                if (pendingApp) {
+                    // 立即尝试打开应用，不需要显示提示
+                    setTimeout(() => {
+                        const appInfo = {
+                            meituan: {
+                                schemes: ['imeituan://', 'mtapp://', 'meituanapp://']
+                            },
+                            douyin: {
+                                schemes: ['douyin://', 'snssdk1128://', 'aweme://']
+                            }
+                        };
+                        
+                        const app = appInfo[pendingApp];
+                        if (app && app.schemes && app.schemes.length > 0) {
+                            // 尝试直接打开第一个scheme
+                            try {
+                                window.location.href = app.schemes[0];
+                            } catch (e) {}
+                        }
+                    }, 100);
+                    
+                    // 5秒后清除待打开状态，避免无限循环
+                    setTimeout(() => {
+                        localStorage.removeItem('pendingAppToOpen');
+                    }, 5000);
+                }
+            }, 300);
+        });
+        
+        // 完全重写的打开商家链接函数 - 支持多个URL Scheme尝试
+        function openBusinessLink(platform) {
+            // 检测是否在浏览器中打开
+            if (!isInBrowser()) {
+                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
+                return;
+            }
+            
+            // 为每个平台提供多个可能的URL Scheme
+            const schemeLists = {
+                douyinGroup: ['douyin://', 'snssdk1128://', 'aweme://'],
+                meituanGroup: ['imeituan://', 'mtapp://', 'meituanapp://'],
+                xiaohongshu: ['xiaohongshu://']
+            };
+            
+            const schemes = schemeLists[platform];
+            
+            if (!schemes || !schemes.length) {
+                console.error('未知的平台类型:', platform);
+                return;
+            }
+            
+            // 尝试打开应用的函数
+            function attemptOpen(scheme) {
+                console.log('尝试打开业务链接:', scheme);
+                
+                // 1. 直接使用location.href
+                try {
+                    window.location.href = scheme;
+                } catch (e) {
+                    console.error('location.href失败:', e);
+                }
+                
+                // 2. 使用a标签
+                try {
+                    const link = document.createElement('a');
+                    link.href = scheme;
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    setTimeout(() => {
+                        try {
+                            if (link.parentNode) {
+                                document.body.removeChild(link);
+                            }
+                        } catch (ignore) {}
+                    }, 10);
+                } catch (e) {
+                    console.error('a标签失败:', e);
+                }
+            }
+            
+            // 尝试第一个scheme
+            attemptOpen(schemes[0]);
+            
+            // 对于抖音相关，尝试多个scheme
+            if ((platform === 'douyinGroup' || platform === 'douyin') && schemes.length > 1) {
+                // 轻微延迟后尝试其他scheme
+                schemes.slice(1).forEach((scheme, index) => {
+                    setTimeout(() => attemptOpen(scheme), (index + 1) * 50);
+                });
+            }
+        }
+        
+        // 处理页面返回事件，防止直接退出整个页面
+        window.addEventListener('popstate', function(event) {
+            // 阻止默认的后退行为
+            event.preventDefault();
+            // 这里可以添加任何你想在返回时执行的操作
+            // 例如，显示一个提示或保持在当前页面
+            history.pushState(null, null, window.location.href);
+        });
+        
+        // 初始化时添加一个历史状态，以便popstate事件能够正常工作
         window.onload = function() {
-            initComments();
+            // 为元素添加顺序动画
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+            fadeElements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+            
+            // 初始化评价内容
+            setTimeout(() => {
+                updateEvaluation('crispyChicken');
+                updateEvaluation('mushroomChicken');
+            }, 500);
+            
+            // 添加历史状态，用于处理返回按钮
+            history.pushState(null, null, window.location.href);
         };
+        
+        // 分享到社交平台
+        function shareToPlatform(platform) {
+            // 检测是否在浏览器中打开
+            if (!isInBrowser()) {
+                // 显示提示文案
+                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
+                return; // 阻止后续操作
+            }
+            alert(`请先复制评价文案，然后在${platform === 'douyin' ? '抖音' : platform === 'xiaohongshu' ? '小红书' : '快手'}APP中粘贴发布`);
+        }
+        
+        // 连接Wifi
+        function connectWifi() {
+            const wifiName = '脆皮炭炉鸡煲';
+            const wifiPassword = '88888888';
+            
+            // 尝试使用Web WiFi API（仅在部分较新浏览器中支持）
+            if (typeof navigator !== 'undefined' && navigator.wifi) {
+                // 检查浏览器是否支持Web WiFi API
+                try {
+                    navigator.wifi.requestNetworkAccess({ 
+                        ssid: wifiName,
+                        auth: {
+                            type: 'wpa-psk',
+                            password: wifiPassword
+                        }
+                    }).then(success => {
+                        if (success) {
+                            alert('成功连接到WiFi网络：' + wifiName);
+                        } else {
+                            showWifiInfo();
+                        }
+                    }).catch(error => {
+                        console.log('Web WiFi API连接失败:', error);
+                        showWifiInfo();
+                    });
+                } catch (e) {
+                    console.log('Web WiFi API不支持或出现错误:', e);
+                    showWifiInfo();
+                }
+            } else {
+                // 不支持Web WiFi API，显示WiFi信息并尝试打开WiFi设置
+                showWifiInfo();
+            }
+        }
+        
+        // 显示WiFi信息并尝试打开WiFi设置
+        function showWifiInfo() {
+            const wifiName = '脆皮炭炉鸡煲';
+            const wifiPassword = '88888888';
+            
+            // 尝试在移动设备上打开WiFi设置
+            try {
+                // 对于iOS设备
+                if (navigator.userAgent.match(/iPhone|iPad|iPod/i)) {
+                    // iOS不允许直接打开WiFi设置，但可以尝试使用通用链接
+                    window.location.href = 'App-Prefs:root=WIFI';
+                }
+                // 对于Android设备
+                else if (navigator.userAgent.match(/Android/i)) {
+                    // 尝试打开WiFi设置
+                    window.location.href = 'android.settings.WIFI_SETTINGS';
+                }
+            } catch (e) {
+                console.log('无法打开WiFi设置:', e);
+            }
+            
+            // 显示WiFi详细信息，方便用户手动连接
+            alert('WiFi信息：\n名称：' + wifiName + '\n密码：' + wifiPassword + '\n\n请在WiFi设置中手动连接。');
+            
+            // 尝试复制密码到剪贴板，方便用户粘贴
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(wifiPassword).then(() => {
+                    // 密码已复制到剪贴板
+                }).catch(err => {
+                    console.error('无法复制密码:', err);
+                });
+            }
+        }
+        
+        // 关闭浏览器提示弹窗
+        function closeBrowserTip() {
+            const modal = document.getElementById('browserTipModal');
+            if (modal) {
+                modal.style.display = 'none';
+                // 存储用户已看过提示的状态，避免重复显示
+                localStorage.setItem('browserTipShown', 'true');
+                // 同时设置会话存储，确保在同一会话中不会重复显示
+                sessionStorage.setItem('browserTipShown', 'true');
+            }
+        }
+        
+        // 页面加载完成后初始化 - 合并为一个函数
+        // 此函数已在前面定义，包含了历史状态管理
+        
+        // 定义检查浏览器提示的函数
+        function checkBrowserTip() {
+            // 先检查sessionStorage，如果同一会话中已经显示过，则不再显示
+            const sessionTipShown = sessionStorage.getItem('browserTipShown');
+            if (sessionTipShown) {
+                const modal = document.getElementById('browserTipModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                return;
+            }
+            
+            // 再检查localStorage，判断是否为首次访问
+            const localStorageTipShown = localStorage.getItem('browserTipShown');
+            if (!localStorageTipShown) {
+                // 首次访问，显示提示
+                const modal = document.getElementById('browserTipModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            } else {
+                // 非首次访问，隐藏提示
+                const modal = document.getElementById('browserTipModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+        
+        // 页面加载时立即检查
+        checkBrowserTip();
+        
+        // 确保在页面完全加载后再次检查
+        window.addEventListener('load', checkBrowserTip);
     </script>
 </body>
 </html>
