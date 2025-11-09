@@ -498,36 +498,6 @@
             transform: translate(-50%, -50%) scale(1);
         }
         
-        /* 透明悬浮框提示样式 - 右上方位置 */
-        .photo-tip-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            color: #e74c3c; /* 红色文字 */
-            padding: 20px 25px;
-            border-radius: 15px;
-            font-size: 30px; /* 字体大小放大一倍 */
-            font-weight: 500;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            transform: translate(100px, 0);
-            max-width: 85%;
-            line-height: 1.5;
-        }
-        
-        /* 透明悬浮框显示动画 */
-        .photo-tip-notification.show {
-            opacity: 1;
-            transform: translate(0, 0);
-        }
-        
         /* 霓虹灯效果 */
         .neon-glow {
             animation: neonPulse 2s infinite alternate;
@@ -595,28 +565,6 @@
                 font-size: 14px;
             }
         }
-        
-        /* 隐藏可能的搜索栏或浮动元素 */
-        #search, .search-bar, [id*="search"], [class*="search"], 
-        [id*="查找"], [class*="查找"], .float-search, #float-search,
-        [data-role="search"], .search-input, #search-input, .search-widget,
-        /* 隐藏所有固定定位在底部的元素 */
-        [style*="position:fixed"][style*="bottom:"],
-        /* 隐藏所有包含搜索图标或功能的元素 */
-        [class*="icon-search"], [id*="icon-search"],
-        /* 隐藏可能的第三方注入元素 */
-        .bdcs-container, .baidu-search, .sogou-search,
-        /* 隐藏可能的广告元素 */
-        .advertisement, .ad-container, .bottom-bar {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            z-index: -1 !important;
-            height: 0 !important;
-            width: 0 !important;
-            overflow: hidden !important;
-        }
     </style>
 </head>
 <body>
@@ -646,12 +594,12 @@
         <div class="nav-section fade-in-up">
             <div class="nav-title">点评参考</div>
             <div class="button-grid">
-                <button class="square-button" onclick="toggleEvaluation('crispyChicken')" style="height: auto; min-height: 100px; width: auto; min-width: 120px;">
-                    <div class="button-icon" style="background: #ff4444; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">脆皮鸡</div>
+                <button class="square-button" onclick="toggleEvaluation('crispyChicken')">
+                    <div class="button-icon" style="background: #ff6b6b; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🍗</div>
                     <div class="button-text">脆皮鸡评价</div>
                 </button>
-                <button class="square-button" onclick="toggleEvaluation('mushroomChicken')" style="height: auto; min-height: 100px; width: auto; min-width: 120px;">
-                    <div class="button-icon" style="background: #4ecdc4; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">香菌鸡</div>
+                <button class="square-button" onclick="toggleEvaluation('mushroomChicken')">
+                    <div class="button-icon" style="background: #4ecdc4; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🍄</div>
                     <div class="button-text">五指香菌鸡评价</div>
                 </button>
             </div>
@@ -689,11 +637,11 @@
                     <div class="button-icon" style="background: #ff0000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">小红书</div>
                     <div class="button-text">小红书笔记</div>
                 </button>
-                <button class="square-button" onclick="openBusinessLink('douyinGroup')">
-                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                <button class="square-button" onclick="openApp('douyin')">
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🎵</div>
                     <div class="button-text">抖音点评</div>
                 </button>
-                <button class="square-button" onclick="openBusinessLink('meituanGroup')">
+                <button class="square-button" onclick="openApp('meituan')">
                     <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 12px;">美团</div>
                     <div class="button-text">美团点评</div>
                 </button>
@@ -705,7 +653,7 @@
             <div class="nav-title">发视频</div>
             <div class="button-grid">
                 <button class="square-button" onclick="shareToPlatform('douyin')">
-                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🎵</div>
                     <div class="button-text">发抖音</div>
                 </button>
                 <button class="square-button" onclick="shareToPlatform('xiaohongshu')">
@@ -713,7 +661,7 @@
                     <div class="button-text">发小红书</div>
                 </button>
                 <button class="square-button" onclick="shareToPlatform('kuaishou')">
-                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 10px;">发快手</div>
+                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 18px;">🎬</div>
                     <div class="button-text">发快手</div>
                 </button>
             </div>
@@ -730,7 +678,7 @@
                     <div class="button-text">美团团购</div>
                 </button>
                 <button class="square-button" onclick="openApp('douyin')">
-                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">抖音</div>
+                    <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🎵</div>
                     <div class="button-text">抖音团购</div>
                 </button>
             </div>
@@ -755,7 +703,6 @@
     
     <!-- 复制成功提示 -->
     <div class="copy-notification" id="copyNotification">复制成功！</div>
-<div class="photo-tip-notification" id="photoTipNotification">您的文采非常优秀，但是还需要配上三张美照才算完美，赶快去拍照展示您的旷世才华吧！</div>
     
     <script>
         // 切换评价板块显示/隐藏
@@ -977,128 +924,126 @@ function fallbackCopyText(text, textarea) {
             
             setTimeout(() => {
                 notification.classList.remove('show');
-                
-                // 复制成功提示消失后，显示透明悬浮框提示
-                setTimeout(() => {
-                    showPhotoTipNotification();
-                }, 300);
             }, 2000);
         }
         
-        // 显示透明悬浮框提示
-        function showPhotoTipNotification(customMessage = null) {
-            const tipNotification = document.getElementById('photoTipNotification');
-            
-            // 如果提供了自定义消息，则使用自定义消息
-            if (customMessage) {
-                tipNotification.textContent = customMessage;
-            } else {
-                // 否则使用默认消息
-                tipNotification.textContent = '您的文采非常优秀，但是还需要配上三张美照才算完美，赶快去拍照展示您的旷世才华吧！';
-            }
-            
-            tipNotification.classList.add('show');
-            
-            // 10秒后自动隐藏提示（延长了5秒）
-            setTimeout(() => {
-                tipNotification.classList.remove('show');
-            }, 10000);
-        }
-        
-        // 检测是否在浏览器中打开
-        function isInBrowser() {
-            // 检测常见的内置浏览器环境
-            const userAgent = navigator.userAgent.toLowerCase();
-            
-            // 检测微信内置浏览器 - 使用更精确的匹配
-            if (/micromessenger\/([\d.]+)/.test(userAgent)) {
-                return false;
-            }
-            
-            // 检测支付宝内置浏览器
-            if (/alipayclient\/([\d.]+)/.test(userAgent)) {
-                return false;
-            }
-            
-            // 检测QQ内置浏览器 - 避免误判正常浏览器
-            if (/qq\/([\d.]+)\s+mobile\s+safari/i.test(userAgent) || /qqbrowser/i.test(userAgent)) {
-                return false;
-            }
-            
-            // 检测其他可能的内置浏览器环境
-            const isWeChatMiniProgram = window.__wxjs_environment === 'miniprogram';
-            
-            // 优化WebView检测，避免误判
-            const isWebView = /\bwv\b/.test(userAgent) || 
-                           (/iphone|ipad|ipod/i.test(userAgent) && /applewebkit/i.test(userAgent) && !/safari/i.test(userAgent)) ||
-                           (/android/i.test(userAgent) && /applewebkit/i.test(userAgent) && !/chrome\//i.test(userAgent));
-            
-            return !(isWeChatMiniProgram || isWebView);
-        }
-        
-        // 完全重写的打开App函数 - 支持多个URL Scheme尝试
+        // 打开App函数 - 移除提示文案，直接尝试打开应用
         function openApp(appName) {
-            // 检测是否在浏览器中打开
-            if (!isInBrowser()) {
-                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
-                return;
-            }
-            
-            // 应用的URL Scheme列表 - 为抖音提供多个可能的Scheme
-            const schemeLists = {
-                meituan: ['imeituan://', 'mtapp://', 'meituanapp://'],
-                douyin: ['douyin://', 'snssdk1128://', 'aweme://']
+            // 支持多平台的URL Scheme列表
+            const appInfo = {
+                meituan: {
+                    schemes: [
+                        'imeituan://',
+                        'mtapp://',
+                        'meituanapp://'
+                    ],
+                    iosUrl: 'https://apps.apple.com/cn/app/id423084029',
+                    androidUrl: 'https://a.app.qq.com/o/simple.jsp?pkgname=com.sankuai.meituan'
+                },
+                douyin: {
+                    schemes: [
+                        'douyin://',
+                        'snssdk1128://',
+                        'aweme://'
+                    ],
+                    iosUrl: 'https://apps.apple.com/cn/app/id1142110895',
+                    androidUrl: 'https://a.app.qq.com/o/simple.jsp?pkgname=com.ss.iphone.ugc.Aweme'
+                }
             };
+
+            const app = appInfo[appName];
+            if (!app) return;
+
+            // 保存当前要打开的应用名称到localStorage，用于从内部浏览器切换到外部浏览器后自动尝试打开
+            localStorage.setItem('pendingAppToOpen', appName);
             
-            const schemes = schemeLists[appName];
-            
-            if (!schemes || !schemes.length) {
-                console.error('未知的应用名称:', appName);
-                return;
-            }
-            
-            // 尝试打开应用的函数
-            function attemptOpen(scheme) {
-                console.log('尝试打开:', scheme);
-                
-                // 1. 直接使用location.href
-                try {
-                    window.location.href = scheme;
-                } catch (e) {
-                    console.error('location.href失败:', e);
+            // 判断用户设备类型
+            const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const downloadUrl = isiOS ? app.iosUrl : app.androidUrl;
+
+            // 移除提示信息处理
+
+            // 尝试所有可能的URL Scheme
+            function tryOpenApp(schemes, index = 0) {
+                if (index >= schemes.length) {
+                    // 所有Scheme都尝试失败，直接清除状态，不显示下载提示
+                    localStorage.removeItem('pendingAppToOpen');
+                    return;
                 }
+
+                const scheme = schemes[index];
                 
-                // 2. 使用a标签
-                try {
-                    const link = document.createElement('a');
-                    link.href = scheme;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    setTimeout(() => {
+                // 使用不同方式尝试打开App
+                const methods = [
+                    // 方法1：直接location.href
+                    () => {
                         try {
-                            if (link.parentNode) {
-                                document.body.removeChild(link);
-                            }
-                        } catch (ignore) {}
-                    }, 10);
-                } catch (e) {
-                    console.error('a标签失败:', e);
-                }
-            }
-            
-            // 尝试第一个scheme（最常用的）
-            attemptOpen(schemes[0]);
-            
-            // 对于抖音，额外尝试其他可能的scheme
-            if (appName === 'douyin' && schemes.length > 1) {
-                // 轻微延迟后尝试第二个scheme
-                setTimeout(() => attemptOpen(schemes[1]), 50);
+                            window.location.href = scheme;
+                        } catch (e) {}
+                    },
+                    // 方法2：动态创建iframe
+                    () => {
+                        try {
+                            const iframe = document.createElement('iframe');
+                            iframe.style.cssText = 'display:none;border:0;width:1px;height:1px;';
+                            iframe.src = scheme;
+                            document.body.appendChild(iframe);
+                            
+                            // 清理iframe
+                            setTimeout(() => {
+                                try {
+                                    document.body.removeChild(iframe);
+                                } catch (e) {}
+                            }, 1000);
+                        } catch (e) {}
+                    },
+                    // 方法3：使用a标签点击
+                    () => {
+                        try {
+                            const link = document.createElement('a');
+                            link.href = scheme;
+                            link.style.display = 'none';
+                            link.target = '_blank'; // 确保在新窗口打开
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        } catch (e) {}
+                    }
+                ];
+
+                // 立即执行所有打开方法
+                methods.forEach(method => {
+                    try {
+                        method();
+                    } catch (e) {}
+                });
+
+                // 检测是否成功打开App
+                let isBlurred = false;
                 
-                // 再延迟一点尝试第三个scheme
-                setTimeout(() => attemptOpen(schemes[2]), 100);
+                // 监听页面失焦事件（如果App打开，页面会失焦）
+                window.addEventListener('blur', onBlur);
+                
+                function onBlur() {
+                    isBlurred = true;
+                    window.removeEventListener('blur', onBlur);
+                    // 应用打开成功，清除待打开状态
+                    localStorage.removeItem('pendingAppToOpen');
+                }
+
+                // 设置超时检测
+                setTimeout(() => {
+                    window.removeEventListener('blur', onBlur);
+                    
+                    if (!isBlurred) {
+                        // 尝试下一个Scheme或显示备选方案
+                        tryOpenApp(schemes, index + 1);
+                    }
+                }, 1500);
             }
+
+            // 立即开始尝试打开App
+            tryOpenApp(app.schemes);
         }
         
         // 页面加载时检查是否有待打开的应用
@@ -1135,68 +1080,72 @@ function fallbackCopyText(text, textarea) {
             }, 300);
         });
         
-        // 完全重写的打开商家链接函数 - 支持多个URL Scheme尝试
+        // 打开商家链接
         function openBusinessLink(platform) {
-            // 检测是否在浏览器中打开
-            if (!isInBrowser()) {
-                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
-                return;
-            }
-            
-            // 为每个平台提供多个可能的URL Scheme
-            const schemeLists = {
-                douyinGroup: ['douyin://', 'snssdk1128://', 'aweme://'],
-                meituanGroup: ['imeituan://', 'mtapp://', 'meituanapp://'],
-                xiaohongshu: ['xiaohongshu://']
-            };
-            
-            const schemes = schemeLists[platform];
-            
-            if (!schemes || !schemes.length) {
-                console.error('未知的平台类型:', platform);
-                return;
-            }
-            
-            // 尝试打开应用的函数
-            function attemptOpen(scheme) {
-                console.log('尝试打开业务链接:', scheme);
-                
-                // 1. 直接使用location.href
+            // 安全打开链接的函数，避免创建过多窗口
+            function safeOpenLink(url, isApp = false) {
                 try {
-                    window.location.href = scheme;
-                } catch (e) {
-                    console.error('location.href失败:', e);
-                }
-                
-                // 2. 使用a标签
-                try {
-                    const link = document.createElement('a');
-                    link.href = scheme;
-                    link.style.display = 'none';
-                    document.body.appendChild(link);
-                    link.click();
-                    
-                    setTimeout(() => {
-                        try {
-                            if (link.parentNode) {
-                                document.body.removeChild(link);
+                    if (isApp) {
+                        // 对于APP链接，直接设置location.href
+                        window.location.href = url;
+                        return true;
+                    } else {
+                        // 对于普通链接，使用更安全的方式
+                        if (window.open && typeof window.open === 'function') {
+                            // 检查是否有之前打开的窗口，如果有则复用
+                            if (window.externalLinkWindow && !window.externalLinkWindow.closed) {
+                                window.externalLinkWindow.location.href = url;
+                                window.externalLinkWindow.focus();
+                            } else {
+                                // 只打开一个窗口
+                                window.externalLinkWindow = window.open(url, '_blank', 'noopener,noreferrer');
+                                // 如果窗口未成功打开（可能被浏览器阻止），则显示提示
+                                if (!window.externalLinkWindow) {
+                                    alert('链接可能被浏览器阻止，请手动复制链接：' + url);
+                                }
                             }
-                        } catch (ignore) {}
-                    }, 10);
-                } catch (e) {
-                    console.error('a标签失败:', e);
+                            return true;
+                        } else {
+                            // 如果window.open不可用，使用location.href
+                            window.location.href = url;
+                            return true;
+                        }
+                    }
+                } catch (error) {
+                    console.error('打开链接失败:', error);
+                    alert('无法打开链接，请手动操作');
+                    return false;
                 }
             }
             
-            // 尝试第一个scheme
-            attemptOpen(schemes[0]);
-            
-            // 对于抖音相关，尝试多个scheme
-            if ((platform === 'douyinGroup' || platform === 'douyin') && schemes.length > 1) {
-                // 轻微延迟后尝试其他scheme
-                schemes.slice(1).forEach((scheme, index) => {
-                    setTimeout(() => attemptOpen(scheme), (index + 1) * 50);
-                });
+            switch (platform) {
+
+                case 'douyinGroup':
+                    // 抖音团购
+                    try {
+                        // 抖音团购链接 - 使用直接跳转
+                        window.location.href = 'https://v.douyin.com/iC9GQK8c/';
+                    } catch (error) {
+                        console.error('打开抖音团购链接失败:', error);
+                        alert('无法打开抖音团购链接，请手动操作');
+                    }
+                    break;
+                    
+                case 'meituanGroup':
+                    // 美团团购
+                    try {
+                        const meituanGroupLink = 'http://dpurl.cn/AwR0po5z';
+                        // 使用直接跳转而不是新窗口
+                        window.location.href = meituanGroupLink;
+                    } catch (error) {
+                        console.error('打开美团团购链接失败:', error);
+                        alert('无法打开美团团购链接，请手动操作');
+                    }
+                    break;
+                case 'xiaohongshu':
+                    // 小红书链接
+                    alert('请在小红书APP中搜索"姐妹花脆皮炭炉鸡煲"进行评价');
+                    break;
             }
         }
         
@@ -1232,12 +1181,6 @@ function fallbackCopyText(text, textarea) {
         
         // 分享到社交平台
         function shareToPlatform(platform) {
-            // 检测是否在浏览器中打开
-            if (!isInBrowser()) {
-                // 显示提示文案
-                showPhotoTipNotification('请点击右上角的...选择在浏览器中打开！');
-                return; // 阻止后续操作
-            }
             alert(`请先复制评价文案，然后在${platform === 'douyin' ? '抖音' : platform === 'xiaohongshu' ? '小红书' : '快手'}APP中粘贴发布`);
         }
         
@@ -1317,48 +1260,23 @@ function fallbackCopyText(text, textarea) {
                 modal.style.display = 'none';
                 // 存储用户已看过提示的状态，避免重复显示
                 localStorage.setItem('browserTipShown', 'true');
-                // 同时设置会话存储，确保在同一会话中不会重复显示
-                sessionStorage.setItem('browserTipShown', 'true');
             }
         }
         
         // 页面加载完成后初始化 - 合并为一个函数
         // 此函数已在前面定义，包含了历史状态管理
         
-        // 定义检查浏览器提示的函数
-        function checkBrowserTip() {
-            // 先检查sessionStorage，如果同一会话中已经显示过，则不再显示
-            const sessionTipShown = sessionStorage.getItem('browserTipShown');
-            if (sessionTipShown) {
-                const modal = document.getElementById('browserTipModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-                return;
-            }
-            
-            // 再检查localStorage，判断是否为首次访问
-            const localStorageTipShown = localStorage.getItem('browserTipShown');
-            if (!localStorageTipShown) {
+        // 检查是否需要显示浏览器提示
+        window.addEventListener('DOMContentLoaded', function() {
+            const tipShown = localStorage.getItem('browserTipShown');
+            if (!tipShown) {
                 // 首次访问，显示提示
                 const modal = document.getElementById('browserTipModal');
                 if (modal) {
                     modal.style.display = 'flex';
                 }
-            } else {
-                // 非首次访问，隐藏提示
-                const modal = document.getElementById('browserTipModal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
             }
-        }
-        
-        // 页面加载时立即检查
-        checkBrowserTip();
-        
-        // 确保在页面完全加载后再次检查
-        window.addEventListener('load', checkBrowserTip);
+        });
     </script>
 </body>
 </html>
