@@ -93,21 +93,24 @@
             right: -100px;
         }
         
-        /* 红色提示框样式 */
+        /* 红色提示框样式 - 增强版 */
         .red-tip-notification {
             position: fixed;
             top: 20px;
             right: 20px;
             background-color: #ff4d4f;
             color: white;
-            padding: 12px 20px;
+            padding: 15px 20px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             z-index: 9999;
             box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
-            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 3s forwards;
-            max-width: 80%;
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 5s forwards;
+            max-width: 90%;
+            word-wrap: break-word;
+            line-height: 1.4;
+            min-width: 250px;
         }
 
         @keyframes slideInRight {
@@ -349,6 +352,17 @@
             box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
         }
         
+        .action-button.share {
+            background: linear-gradient(135deg, #dc3545, #e83e8c);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+        
+        .action-button.share:hover {
+            background: linear-gradient(135deg, #c82333, #d73a8c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+        
         /* 评价按钮容器样式 */
         .evaluation-buttons {
             margin-top: 15px;
@@ -576,7 +590,7 @@
     </style>
 </head>
 <body>
-    <!-- 红色提示框元素 -->
+    <!-- 红色提示框元素 - 增强版 -->
     <div id="redTipNotification" class="red-tip-notification" style="display: none;">
         请点击右上角的...选择在浏览器中打开
     </div>
@@ -640,7 +654,7 @@
         <div class="nav-section fade-in-up">
             <div class="nav-title">点评打卡</div>
             <div class="button-grid">
-                <button class="square-button" onclick="openBusinessLink('xiaohongshu')">
+                <button class="square-button" onclick="openXiaohongshuWeb('https://www.xiaohongshu.com/')">
                     <div class="button-icon" style="background: #ff0000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">小红书</div>
                     <div class="button-text">小红书笔记</div>
                 </button>
@@ -659,17 +673,17 @@
         <div class="nav-section fade-in-up">
             <div class="nav-title">发视频</div>
             <div class="button-grid">
-                <button class="square-button" onclick="shareToPlatform('douyin')">
+                <button class="square-button" onclick="openApp('douyin')">
                     <div class="button-icon" style="background: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">🎵</div>
                     <div class="button-text">发抖音</div>
                 </button>
-                <button class="square-button" onclick="shareToPlatform('xiaohongshu')">
+                <button class="square-button" onclick="openXiaohongshuWeb('https://www.xiaohongshu.com/category/64176e470000000017033d8f')">
                     <div class="button-icon" style="background: #ff0000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">小红书</div>
                     <div class="button-text">发小红书</div>
                 </button>
-                <button class="square-button" onclick="shareToPlatform('kuaishou')">
-                    <div class="button-icon" style="background: #ffcc00; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; font-size: 18px;">🎬</div>
-                    <div class="button-text">发快手</div>
+                <button class="square-button" onclick="generateVideoCopy()">
+                    <div class="button-icon" style="background: #09bb07; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">👥</div>
+                    <div class="button-text">发朋友圈</div>
                 </button>
             </div>
         </div>
@@ -698,6 +712,14 @@
                 <button class="square-button" onclick="connectWifi()">
                     <div class="button-icon" style="background: #2196f3; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">📶</div>
                     <div class="button-text">连接Wifi</div>
+                </button>
+                <button class="square-button" onclick="generateVideoCopy()">
+                    <div class="button-icon" style="background: #e91e63; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">📝</div>
+                    <div class="button-text">视频文案</div>
+                </button>
+                <button class="square-button" onclick="generateReplyCopy()">
+                    <div class="button-icon" style="background: #9c27b0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px;">💬</div>
+                    <div class="button-text">回复文案</div>
                 </button>
             </div>
         </div>
@@ -956,7 +978,7 @@ function fallbackCopyText(text, textarea) {
         }
 
         // 显示红色提示框函数
-        function showRedTipNotification() {
+        function showRedTipNotification(message) {
             // 首先判断是否在有右上角"..."菜单的环境中
             if (!hasTopRightMenu()) {
                 // 如果没有，则不显示提示
@@ -964,6 +986,14 @@ function fallbackCopyText(text, textarea) {
             }
             
             const notification = document.getElementById('redTipNotification');
+            
+            // 设置提示文本，如果没有提供则使用默认文本
+            if (message) {
+                notification.textContent = message;
+            } else {
+                notification.textContent = '请点击右上角的...选择在浏览器中打开';
+            }
+            
             // 重置动画
             notification.style.animation = 'none';
             // 触发重排
@@ -979,7 +1009,7 @@ function fallbackCopyText(text, textarea) {
             }, 3300);
         }
 
-        // 优化后的打开App函数 - 简化逻辑，提高响应速度
+        // 优化后的打开App函数 - 保留其他应用的功能
         function openApp(appName) {
             // 显示红色提示框
             showRedTipNotification();
@@ -1005,17 +1035,13 @@ function fallbackCopyText(text, textarea) {
             const app = appInfo[appName];
             if (!app || !app.schemes || app.schemes.length === 0) return;
 
-            // 简化的打开逻辑 - 直接使用最有效的方式
-            const scheme = app.schemes[0];
-            
             // 方法1：直接使用location.href - 最快的方式
             try {
-                window.location.href = scheme;
+                window.location.href = app.schemes[0];
             } catch (e) {}
             
-            // 仅在第一个尝试失败后立即尝试备用方案，而不等待超时
+            // 对于其他应用，保持原有简化逻辑
             if (app.schemes.length > 1) {
-                // 添加一个极小的延迟以避免阻塞，但比之前快很多
                 setTimeout(() => {
                     try {
                         const link = document.createElement('a');
@@ -1023,42 +1049,105 @@ function fallbackCopyText(text, textarea) {
                         link.style.display = 'none';
                         document.body.appendChild(link);
                         link.click();
-                        // 立即清理，不等待1秒
                         document.body.removeChild(link);
                     } catch (e) {}
-                }, 100); // 仅100ms延迟，而不是之前的1500ms
+                }, 100);
             }
         }
         
-        // 页面加载时检查是否有待打开的应用
+        // 打开小红书网页版功能 - 优化为使用直接重定向，避免窗口数量限制
+        function openXiaohongshuWeb(url) {
+            // 跟踪用户操作
+            trackUserAction('xiaohongshu_web_click');
+            
+            // 预连接到小红书网站
+            preloadXiaohongshuResources();
+            
+            // 直接在当前窗口打开，避免创建新窗口导致的浏览器限制
+            window.location.href = url;
+        }
+        
+        // 跟踪用户操作
+        function trackUserAction(action) {
+            console.log('用户操作:', action);
+            // 可以在这里添加更多的分析逻辑
+        }
+        
+        // 检测APP打开状态
+        function checkAppOpenStatus() {
+            // 记录当前时间
+            const startTime = Date.now();
+            
+            // 页面可见性变化监听
+            document.addEventListener('visibilitychange', function visibilityHandler() {
+                if (document.visibilityState === 'hidden') {
+                    // 页面失去焦点，可能APP已打开
+                    console.log('页面失去焦点，可能成功打开应用');
+                }
+            });
+            
+            // 延迟检查
+            setTimeout(() => {
+                // 移除事件监听
+                document.removeEventListener('visibilitychange', visibilityHandler);
+            }, 5000);
+        }
+        
+        // 预加载小红书资源
+        function preloadXiaohongshuResources() {
+            // 预连接到小红书网站
+            const link = document.createElement('link');
+            link.rel = 'preconnect';
+            link.href = 'https://www.xiaohongshu.com';
+            document.head.appendChild(link);
+        }
+        
+        // 增强版浏览器提示函数
+        function showEnhancedBrowserTip(appName, appInfo) {
+            const notification = document.getElementById('redTipNotification');
+            
+            // 根据不同应用显示不同提示
+            const appNames = {
+                meituan: '美团',
+                douyin: '抖音',
+                xiaohongshu: '小红书'
+            };
+            
+            const appNameText = appNames[appName] || appName;
+            const scheme = appInfo && appInfo[appName] && appInfo[appName].schemes ? appInfo[appName].schemes[0] : '';
+            notification.textContent = `请确保已安装${appNameText}应用。在浏览器中点击按钮时，系统会自动尝试打开应用。如无响应，请手动复制此链接：${scheme}`;
+            
+            // 重置动画
+            notification.style.animation = 'none';
+            // 触发重排
+            void notification.offsetWidth;
+            // 重新应用动画，延长显示时间
+            notification.style.animation = 'slideInRight 0.3s ease, fadeOut 0.3s ease 5s forwards';
+            // 显示提示框
+            notification.style.display = 'block';
+            notification.style.padding = '15px 20px';
+            notification.style.fontSize = '16px';
+            notification.style.zIndex = '9999';
+            
+            // 5秒后隐藏
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // 页面加载时检查是否有待打开的应用，但不再自动打开
         window.addEventListener('load', function() {
             // 延迟检查，确保页面完全加载
             setTimeout(() => {
                 const pendingApp = localStorage.getItem('pendingAppToOpen');
                 if (pendingApp) {
-                    // 立即尝试打开应用，不需要显示提示
-                    setTimeout(() => {
-                        const appInfo = {
-                            meituan: {
-                                schemes: ['imeituan://', 'mtapp://', 'meituanapp://']
-                            },
-                            douyin: {
-                                schemes: ['douyin://', 'snssdk1128://', 'aweme://']
-                            }
-                        };
-                        
-                        const app = appInfo[pendingApp];
-                        if (app && app.schemes && app.schemes.length > 0) {
-                            // 尝试直接打开第一个scheme
-                            try {
-                                window.location.href = app.schemes[0];
-                            } catch (e) {}
-                        }
-                    }, 100);
+                    console.log(`检测到待打开的应用: ${pendingApp}，已存储在localStorage中`);
                     
-                    // 5秒后清除待打开状态，避免无限循环
+                    // 页面加载时不再自动打开应用，只在用户点击按钮时才打开
+                    // 但仍然清除旧的待打开状态，避免累积
                     setTimeout(() => {
                         localStorage.removeItem('pendingAppToOpen');
+                        console.log('已清除待打开应用状态');
                     }, 5000);
                 }
             }, 300);
@@ -1081,8 +1170,8 @@ function fallbackCopyText(text, textarea) {
                     window.location.href = 'http://dpurl.cn/AwR0po5z';
                     break;
                 case 'xiaohongshu':
-                    // 小红书链接
-                    alert('请在小红书APP中搜索"姐妹花脆皮炭炉鸡煲"进行评价');
+                    // 小红书链接 - 使用优化后的openApp函数
+                    openApp('xiaohongshu');
                     break;
             }
         }
@@ -1122,7 +1211,69 @@ function fallbackCopyText(text, textarea) {
             // 显示红色提示框
             showRedTipNotification();
             
-            alert(`请先复制评价文案，然后在${platform === 'douyin' ? '抖音' : platform === 'xiaohongshu' ? '小红书' : '快手'}APP中粘贴发布`);
+            if (platform === 'xiaohongshu') {
+                // 小红书分享 - 使用优化后的openApp函数
+                openApp('xiaohongshu');
+            } else {
+                alert(`请先复制评价文案，然后在${platform === 'douyin' ? '抖音' : '快手'}APP中粘贴发布`);
+            }
+        }
+        
+        // 分享到微信朋友圈功能
+        function shareToWechatMoment() {
+            // 显示红色提示框
+            showRedTipNotification('准备分享到微信朋友圈');
+            
+            // 预设的朋友圈分享文案
+            const shareText = generateVideoCopy();
+            
+            // 尝试复制到剪贴板
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    console.log('文案已复制到剪贴板');
+                    showCopyNotification('分享文案已复制到剪贴板');
+                }).catch(err => {
+                    console.error('无法复制到剪贴板:', err);
+                    // 降级方案
+                    fallbackCopyText(shareText);
+                });
+            } else {
+                // 降级方案
+                fallbackCopyText(shareText);
+            }
+            
+            // 微信URL Scheme - 尝试打开微信应用
+            const wechatSchemes = [
+                'weixin://',
+                'wx://',
+                'wechat://'
+            ];
+            
+            // 尝试第一个Scheme
+            try {
+                window.location.href = wechatSchemes[0];
+            } catch (e) {
+                console.error('无法打开微信:', e);
+            }
+            
+            // 100ms后尝试第二个Scheme作为备用
+            setTimeout(() => {
+                try {
+                    const link = document.createElement('a');
+                    link.href = wechatSchemes[1];
+                    link.style.display = 'none';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (e) {
+                    console.error('备用方案也失败:', e);
+                }
+            }, 100);
+            
+            // 显示操作指引
+            setTimeout(() => {
+                alert('请按以下步骤操作：\n1. 已将分享文案复制到剪贴板\n2. 打开微信后，点击「发现」\n3. 点击「朋友圈」\n4. 长按相机图标发布文字朋友圈\n5. 粘贴刚才复制的文案\n6. 点击发布完成分享');
+            }, 500);
         }
         
         // 连接Wifi
@@ -1199,7 +1350,663 @@ function fallbackCopyText(text, textarea) {
         // 页面加载完成后初始化 - 合并为一个函数
         // 此函数已在前面定义，包含了历史状态管理
         
-        // 弹窗功能已移除
+        // 已移除天气功能相关代码
+        
+        // 生成随机生活元素的辅助函数
+        function getRandomLifeElements() {
+            // 随机选择一些情感词汇
+            const feelingWords = ['心情好好', '生活美滋滋', '幸福感满满', '元气满满', '超满足', '快乐加倍', '享受生活', '太治愈了'];
+            const randomFeeling = feelingWords[Math.floor(Math.random() * feelingWords.length)];
+            
+            return { feeling: randomFeeling };
+        }
+        
+        // 生成随机问候语
+        function getRandomGreeting() {
+            const greetings = [
+                '今天又是美好的一天，',
+                '忙碌的生活，',
+                '享受美食的时刻，',
+                '放松的时光，',
+                '温馨的氛围中，'
+            ];
+            return greetings[Math.floor(Math.random() * greetings.length)];
+        }
+        
+        // 生成特定时段的视频文案
+        async function generateSpecificCopy(isLunch) {
+            try {
+                // 不再获取天气数据，直接使用固定文案
+                const elements = getRandomLifeElements();
+                const greeting = getRandomGreeting();
+                
+                if (isLunch) {
+                    // 午餐文案 - 商家角色
+                    return `【姐妹花脆皮碳炉鸡堡】今日午餐推荐
+
+亲爱的顾客们，中午好！${greeting}别忘记照顾好自己的胃哦~
+
+我们已为您准备好新鲜的食材和热腾腾的火锅，采用当天采购的优质食材，浓郁汤底香味扑鼻，搭配鸡肉脆嫩的特色脆皮鸡，口感一流！
+
+午餐时段特别推出「午餐优惠套餐」，包含招牌脆皮鸡、精选蔬菜拼盘和饮料，为您的下午提供满满能量！
+
+店内环境温馨舒适，提供免费WiFi，是您享用午餐、办公小聚的绝佳选择。我们的午餐时段从中午11点开始，期待您的光临！
+
+#午餐推荐 #姐妹花脆皮鸡 #火锅美食 #午餐好去处 #美食分享`;
+                } else {
+                    // 晚餐文案 - 商家角色
+                    return `【姐妹花脆皮碳炉鸡堡】今晚吃点好的
+
+晚上好，亲爱的顾客！${greeting}来尝尝我们的招牌美食吧~
+
+结束了一天的忙碌，不妨来姐妹花脆皮碳炉鸡堡放松一下！我们的人参汤底和五指香菌鸡是今晚的主打，热腾腾的炭炉，香气四溢的鸡肉，让人回味无穷！
+
+晚餐特别推荐「欢聚套餐」，适合3-4人分享，包含多种特色小菜和饮品，是朋友聚会、家庭聚餐的理想选择。
+
+店内灯光温馨，音乐轻柔，服务贴心，为您提供舒适的用餐环境。营业时间至晚上10点，我们在这里等您！
+
+#晚餐推荐 #美食分享 #姐妹花脆皮鸡 #聚会好去处 #美食探店`;
+                }
+            } catch (error) {
+                console.error('生成文案时出错:', error);
+                // 出错时返回备用文案
+                return `【姐妹花脆皮碳炉鸡堡】欢迎您的光临
+
+不管天气如何，我们都在这里为您准备美味的脆皮鸡！
+
+我们的招牌炭炉鸡采用传统工艺，鸡肉脆嫩多汁，配上秘制蘸料，口感一流！
+
+店内环境舒适，服务周到，期待您的到来！
+
+#美食推荐 #姐妹花脆皮鸡 #美味不容错过`;
+            }
+        }
+        
+        // 根据当前时间生成相应的视频文案
+        async function generateVideoCopy() {
+            // 获取当前时间决定默认显示哪个时段的文案
+            const now = new Date();
+            const hour = now.getHours();
+            const isLunch = hour >= 11 && hour < 17;
+            
+            // 创建一个模态弹窗
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>商家视频文案</h3>
+                        <span class="close-button" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="videoCopyText" readonly>正在生成文案，请稍候...</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="morningCopyButton" class="action-button" onclick="handleMorningShare()">清晨文案</button>
+                        <button id="eveningCopyButton" class="action-button update" onclick="handleEveningShare()">晚间文案</button>
+                        <button id="copyShareButton" class="action-button share" onclick="handleCopyShare()">复制分享</button>
+                    </div>
+                </div>
+            `;
+            
+            // 添加模态框到文档
+            document.body.appendChild(modal);
+            
+            // 自动调用清晨文案函数
+            setTimeout(handleMorningShare, 300);
+            
+            // 添加模态框样式
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .modal {
+                    display: flex;
+                    position: fixed;
+                    z-index: 1000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    align-items: center;
+                    justify-content: center;
+                }
+                .modal-content {
+                    background-color: white;
+                    margin: auto;
+                    padding: 0;
+                    border-radius: 10px;
+                    width: 90%;
+                    max-width: 500px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    animation-name: modalopen;
+                    animation-duration: 0.3s;
+                }
+                @keyframes modalopen {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .modal-header {
+                    padding: 15px 20px;
+                    background-color: #e91e63;
+                    color: white;
+                    border-radius: 10px 10px 0 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .modal-header h3 {
+                    margin: 0;
+                    font-size: 18px;
+                }
+                .close-button {
+                    color: white;
+                    font-size: 24px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+                .close-button:hover {
+                    color: #f0f0f0;
+                }
+                .modal-body {
+                    padding: 20px;
+                }
+                .weather-temp-display {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    color: white;
+                    margin-bottom: 15px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+                .location {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+                .temperature {
+                    font-size: 24px;
+                    font-weight: bold;
+                }
+                #videoCopyText {
+                    width: 100%;
+                    height: 250px;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    resize: none;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    box-sizing: border-box;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    background-color: #f9f9f9;
+                    cursor: default;
+                }
+                .modal-footer {
+                    padding: 10px 15px;
+                    background-color: #f5f5f5;
+                    border-radius: 0 0 10px 10px;
+                    display: flex;
+                    gap: 4px;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    box-sizing: border-box;
+                }
+                /* 按钮样式已通过action-button类实现 */
+            `;
+            
+            // 添加到文档
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // 异步生成文案并更新
+            try {
+                // 先获取并显示天气数据
+                await fetchLocalWeather();
+                // 然后生成文案
+                const videoCopy = await generateSpecificCopy(isLunch);
+                document.getElementById('videoCopyText').value = videoCopy;
+            } catch (error) {
+                console.error('生成文案失败:', error);
+                document.getElementById('videoCopyText').value = '文案生成失败，请点击刷新按钮重试';
+            }
+        }
+        
+        // 关闭模态弹窗
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            const style = document.querySelector('style:last-child');
+            if (modal) document.body.removeChild(modal);
+            if (style) document.head.removeChild(style);
+        }
+        
+        // 回复评价文案内容库
+        let replyTemplates = [
+            "感谢您的光临和宝贵评价！我们会继续努力提供更好的服务和美食。期待再次为您服务！😊",
+            "非常感谢您对我们的认可！您的满意是我们最大的动力，我们会不断提升菜品质量和服务水平。祝您生活愉快！",
+            "感谢您的好评！我们将继续保持对食材和烹饪的高标准要求，为您带来美味的用餐体验。欢迎再次光临！",
+            "非常感谢您的支持与厚爱！您的评价对我们至关重要，我们会继续努力做得更好。期待您的再次光临！",
+            "感谢您的精彩点评！很高兴您喜欢我们的菜品和服务，我们会再接再厉，为您提供更优质的用餐体验。",
+            "非常感谢您的肯定！我们会珍惜您的评价，不断改进，为您带来更多美味。期待再次相见！",
+            "感谢您的宝贵反馈！我们会认真对待每一位顾客的意见，不断提升我们的服务质量。欢迎常来！",
+            "非常感谢您的好评！您的支持是我们前进的动力，我们会继续用美味和热情回报您的厚爱。"
+        ];
+        
+        // 生成随机回复文案
+        function generateRandomReply() {
+            const randomIndex = Math.floor(Math.random() * replyTemplates.length);
+            return replyTemplates[randomIndex];
+        }
+        
+        // 根据当前情况生成相应的回复评价文案
+        async function generateReplyCopy() {
+            // 创建一个模态弹窗
+            const modal = document.createElement('div');
+            modal.className = 'modal reply-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>商家回复评价文案</h3>
+                        <span class="close-button" onclick="closeModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <textarea id="replyCopyText" readonly>正在生成回复文案，请稍候...</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="refreshReplyButton" class="refresh-button" onclick="refreshReplyCopy()">刷新文案</button>
+                        <button id="copyReplyButton" class="copy-button" onclick="copyReplyCopy()">复制文案</button>
+                    </div>
+                </div>
+            `;
+            
+            // 添加模态框样式
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .modal {
+                    display: flex;
+                    position: fixed;
+                    z-index: 1000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    align-items: center;
+                    justify-content: center;
+                }
+                .modal-content {
+                    background-color: white;
+                    margin: auto;
+                    padding: 0;
+                    border-radius: 10px;
+                    width: 90%;
+                    max-width: 500px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    animation-name: modalopen;
+                    animation-duration: 0.3s;
+                }
+                @keyframes modalopen {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .modal-header {
+                    padding: 15px 20px;
+                    background-color: #9c27b0;
+                    color: white;
+                    border-radius: 10px 10px 0 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                .modal-header h3 {
+                    margin: 0;
+                    font-size: 18px;
+                }
+                .close-button {
+                    color: white;
+                    font-size: 24px;
+                    font-weight: bold;
+                    cursor: pointer;
+                }
+                .close-button:hover {
+                    color: #f0f0f0;
+                }
+                .modal-body {
+                    padding: 20px;
+                }
+                #replyCopyText {
+                    width: 100%;
+                    height: 250px;
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    resize: none;
+                    font-size: 14px;
+                    line-height: 1.5;
+                    box-sizing: border-box;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    background-color: #f9f9f9;
+                    cursor: default;
+                }
+                .modal-footer {
+                    padding: 10px 5px;
+                    background-color: #f5f5f5;
+                    border-radius: 0 0 10px 10px;
+                    display: flex;
+                    gap: 5px;
+                    justify-content: center;
+                    flex-wrap: nowrap;
+                }
+                
+                .reply-modal .modal-footer {
+                    padding: 10px 20px;
+                    background-color: #f5f5f5;
+                    border-radius: 0 0 10px 10px;
+                    display: flex;
+                    gap: 15px;
+                    justify-content: center;
+                }
+                /* 刷新按钮样式 - 参照action-button标准 */
+                .reply-modal .refresh-button {
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, #007bff, #00bcd4);
+                    color: white;
+                    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+                    min-width: 120px;
+                    text-align: center;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 8px;
+                }
+                
+                .reply-modal .refresh-button:hover {
+                    background: linear-gradient(135deg, #0069d9, #00acc1);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+                }
+                
+                .reply-modal .refresh-button:active {
+                    transform: translateY(3px) scale(0.98);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                }
+                
+                /* 复制按钮样式 - 参照action-button标准，设置红色背景 */
+                .reply-modal .copy-button {
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    background: linear-gradient(135deg, #dc3545, #e83e8c);
+                    color: white;
+                    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+                    min-width: 120px;
+                    text-align: center;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 8px;
+                }
+                
+                .reply-modal .copy-button:hover {
+                    background: linear-gradient(135deg, #c82333, #d73a8c);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+                }
+                
+                .reply-modal .copy-button:active {
+                    transform: translateY(3px) scale(0.98);
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                }
+            `;
+            
+            // 添加到文档
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // 异步生成文案并更新
+            try {
+                const replyCopy = generateRandomReply();
+                document.getElementById('replyCopyText').value = replyCopy;
+            } catch (error) {
+                console.error('生成文案失败:', error);
+                document.getElementById('replyCopyText').value = '文案生成失败，请点击刷新按钮重试';
+            }
+        }
+        
+        // 清晨文案按钮处理函数
+        async function handleMorningShare() {
+            const textArea = document.getElementById('videoCopyText');
+            // 不显示加载状态，避免覆盖已经显示的文案
+            // textArea.value = '正在生成清晨文案，请稍候...';
+            
+            try {
+                // 异步生成清晨文案
+                const morningCopy = await generateSpecificCopy(true);
+                textArea.value = morningCopy;
+                
+                // 只显示文案，移除复制功能
+            } catch (error) {
+                console.error('生成文案失败:', error);
+                textArea.value = '文案生成失败，请重试';
+                alert('生成文案时出现错误，请点击刷新按钮重试');
+            }
+        }
+        
+        // 晚间文案按钮处理函数
+        async function handleEveningShare() {
+            const textArea = document.getElementById('videoCopyText');
+            // 显示加载状态
+            textArea.value = '正在生成晚间文案，请稍候...';
+            // 确保文本框失去焦点，防止弹出键盘
+            textArea.blur();
+            
+            try {
+                // 异步生成晚间文案
+                const eveningCopy = await generateSpecificCopy(false);
+                textArea.value = eveningCopy;
+                // 再次确保文本框失去焦点
+                textArea.blur();
+                
+                // 只显示文案，移除分享和复制功能
+            } catch (error) {
+                console.error('生成文案失败:', error);
+                textArea.value = '文案生成失败，请重试';
+                // 确保文本框失去焦点
+                textArea.blur();
+                alert('生成文案时出现错误，请点击刷新按钮重试');
+            }
+        }
+        
+        // 复制分享按钮处理函数
+        async function handleCopyShare() {
+            const textArea = document.getElementById('videoCopyText');
+            const text = textArea.value;
+            
+            if (!text || text === '正在生成文案，请稍候...' || text === '文案生成失败，请重试') {
+                alert('请先生成文案后再复制');
+                return;
+            }
+            
+            try {
+                // 复制文本到剪贴板
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    // 降级方案
+                    textArea.select();
+                    textArea.setSelectionRange(0, 99999);
+                    document.execCommand('copy');
+                    // 确保文本框失去焦点
+                    textArea.blur();
+                }
+                
+                // 显示复制成功提示
+                alert('复制成功');
+            } catch (error) {
+                console.error('复制失败:', error);
+                alert('复制失败，请重试');
+            }
+        }
+        
+        // 通用复制函数
+        async function copyToClipboard(text, textArea) {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } else {
+                textArea.select();
+                return document.execCommand('copy');
+            }
+        }
+        
+        // 复制分享按钮处理函数
+        async function handleCopyShare() {
+            const textArea = document.getElementById('videoCopyText');
+            const copyText = textArea.value;
+            
+            try {
+                // 复制到剪贴板
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(copyText);
+                } else {
+                    // 降级方案
+                    textArea.select();
+                    document.execCommand('copy');
+                }
+                // 调用复制成功提示
+                showCopyNotification('文案已成功复制！');
+            } catch (error) {
+                console.error('复制文案失败:', error);
+                // 静默失败，不显示提示
+            }
+        }
+        
+        // 刷新回复文案按钮处理函数 - 只执行刷新功能，不包含复制功能
+        function refreshReplyCopy() {
+            const textArea = document.getElementById('replyCopyText');
+            textArea.value = '正在重新生成文案，请稍候...';
+            
+            try {
+                // 生成新的回复文案
+                const newReply = generateRandomReply();
+                textArea.value = newReply;
+            } catch (error) {
+                console.error('刷新文案失败:', error);
+                textArea.value = '文案刷新失败，请重试';
+                alert('刷新文案时出现错误，请重试');
+            }
+        }
+        
+        // 复制回复文案按钮处理函数
+        function copyReplyCopy() {
+            const textArea = document.getElementById('replyCopyText');
+            const replyText = textArea.value;
+            
+            try {
+                // 复制到剪贴板
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(replyText).then(() => {
+                        showCopyNotification('回复文案已复制成功！');
+                    }).catch(err => {
+                        console.error('无法复制文案:', err);
+                        fallbackCopyReply(textArea, replyText);
+                    });
+                } else {
+                    // 降级方案
+                    fallbackCopyReply(textArea, replyText);
+                }
+            } catch (error) {
+                console.error('复制文案失败:', error);
+                // 静默失败，不显示提示
+            }
+        }
+        
+        // 复制回复文案的降级方案
+        function fallbackCopyReply(textArea, replyText) {
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showCopyNotification('回复文案已复制成功！');
+            } catch (err) {
+                console.error('降级复制方案也失败:', err);
+                // 静默失败，不显示提示
+            }
+        }
+        
+        // 刷新文案按钮处理函数
+        async function refreshVideoCopy() {
+            const textArea = document.getElementById('videoCopyText');
+            textArea.value = '正在重新生成文案，请稍候...';
+            
+            try {
+                // 清除缓存，强制获取新的天气数据
+                weatherData = null;
+                lastWeatherFetchTime = 0;
+                
+                // 随机选择一个时段生成文案
+                const isMorning = Math.random() > 0.5;
+                const newCopy = await generateSpecificCopy(isMorning);
+                textArea.value = newCopy;
+                showCopyNotification('文案已刷新，天气信息已更新！');
+            } catch (error) {
+                console.error('刷新文案失败:', error);
+                textArea.value = '文案刷新失败，请重试';
+                alert('刷新文案时出现错误，请重试');
+            }
+        }
+        
+        // 显示复制成功提示
+        function showCopyNotification(message = '复制成功！') {
+            // 移除任何可能存在的旧通知
+            const oldNotification = document.getElementById('copyNotification');
+            if (oldNotification) {
+                document.body.removeChild(oldNotification);
+            }
+            
+            // 创建新的通知元素
+            const notification = document.createElement('div');
+            notification.id = 'copyNotification';
+            
+            // 设置基础样式，确保通知能显示
+            notification.style.position = 'fixed';
+            notification.style.top = '50%';
+            notification.style.left = '50%';
+            notification.style.transform = 'translate(-50%, -50%)';
+            notification.style.backgroundColor = 'rgba(0, 128, 0, 0.9)';
+            notification.style.color = 'white';
+            notification.style.padding = '20px 30px';
+            notification.style.borderRadius = '10px';
+            notification.style.zIndex = '9999';
+            notification.style.display = 'block';
+            notification.style.fontSize = '18px';
+            notification.style.fontWeight = 'bold';
+            notification.style.border = '2px solid #4CAF50';
+            notification.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.4)';
+            notification.style.textAlign = 'center';
+            notification.style.minWidth = '200px';
+            
+            // 设置消息内容
+            notification.textContent = message;
+            
+            // 添加到页面
+            document.body.appendChild(notification);
+            
+            // 设置消失定时器
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 2000);
+        }
     </script>
 </body>
 </html>
