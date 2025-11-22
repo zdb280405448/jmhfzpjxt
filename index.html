@@ -2378,85 +2378,83 @@ function fallbackCopyText(text, textarea) {
                     fallbackCopyReply(textArea, replyText);
                 }
             } catch (error) {
-                安慰。error ( '复制文案失败：' , error ) ;
+                console.error('复制文案失败:', error);
                 // 静默失败，不显示提示
             }
         }
         
         // 复制回复文案的降级方案
-        函数 fallbackCopyReply （文本区域，回复文本） {
-            文本区域。选择（） ;
-            尝试 {
-                文档。execCommand ( '复制' ) ;
-                showCopyNotification ( '回复文案已复制成功！' ) ;
-            } 捕获 （错误） {
-                安慰。error ( '降级复制方案也失败:' , err ) ;
+        function fallbackCopyReply(textArea, replyText) {
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showCopyNotification('回复文案已复制成功！');
+            } catch (err) {
+                console.error('降级复制方案也失败:', err);
                 // 静默失败，不显示提示
             }
         }
         
         // 刷新文案按钮处理函数
-        异步 函数 刷新视频复制（） {
-            const  textArea =文档. getElementById ( '视频复制文本' ) ;
-            文本区域。value = '正在重新生成文案，请稍候...' ;
+        async function refreshVideoCopy() {
+            const textArea = document.getElementById('videoCopyText');
+            textArea.value = '正在重新生成文案，请稍候...';
             
-            尝试 {
-                // 清除存储，强制获取新的天气数据
-                天气数据= null ;
-                最后天气获取时间= 0 ;
+            try {
+                // 清除缓存，强制获取新的天气数据
+                weatherData = null;
+                lastWeatherFetchTime = 0;
                 
-                // 随机选择一个生成的文案
-                const  isMorning =数学.随机( ) > 0.5；
-                const  newCopy =等待 generateSpecificCopy ( isMorning ) ;
-                文本区域。值=新复制;
-                showCopyNotification ( '文案已刷新，天气信息已更新！' ) ;
-            } 捕获 （错误） {
-                安慰。error ( '刷新文案失败:' , error ) ;
-                文本区域。value = '文案刷新失败，请重试' ;
-                alert ( '刷新文案时出现错误，请重试' ) ;
+                // 随机选择一个时段生成文案
+                const isMorning = Math.random() > 0.5;
+                const newCopy = await generateSpecificCopy(isMorning);
+                textArea.value = newCopy;
+                showCopyNotification('文案已刷新，天气信息已更新！');
+            } catch (error) {
+                console.error('刷新文案失败:', error);
+                textArea.value = '文案刷新失败，请重试';
+                alert('刷新文案时出现错误，请重试');
             }
         }
         
         // 显示复制成功提示
         function showCopyNotification(message = '复制成功！') {
             // 移除任何可能存在的旧通知
-            // 刷新回复文案按钮处理函数 - 只执行刷新功能，不包含复制功能 oldNotification = document.getElementById('copyNotification');
-            函数 刷新回复复制（） {
-                .(oldNotification)
-            文本区域
-value
-            
-            尝试
-            // 生成新的回复文案 notification = document.createElement('div');
-            .;
-            
+            const oldNotification = document.getElementById('copyNotification');
+            if (oldNotification) {
+                document.body.removeChild(oldNotification);
             }
-捕获（错误）
-            安慰。error .(  = '刷新文案失败:' , error 
-            文本区域。value = '文案刷新失败，请重试' ;'50%';
-            alert .( .'刷新文案时出现错误，请重试'  = ) ;
-            }.style.transform = 'translate(-50%, -50%)';
-            }.style.backgroundColor = 'rgba(0, 128, 0, 0.9)';
+            
+            // 创建新的通知元素
+            const notification = document.createElement('div');
+            notification.id = 'copyNotification';
+            
+            // 设置基础样式，确保通知能显示
+            notification.style.position = 'fixed';
+            notification.style.top = '50%';
+            notification.style.left = '50%';
+            notification.style.transform = 'translate(-50%, -50%)';
+            notification.style.backgroundColor = 'rgba(0, 128, 0, 0.9)';
             notification.style.color = 'white';
-            // 复制回复文案按钮处理函数.style.padding = '20px 30px';
-            .. = ;
-            .;
-            const.回复文本=文本区域.价值;
+            notification.style.padding = '20px 30px';
+            notification.style.borderRadius = '10px';
+            notification.style.zIndex = '9999';
+            notification.style.display = 'block';
             notification.style.fontSize = '18px';
-            尝试.{.fontWeight = 'bold';
-            // 复制到剪贴板.style.border = '2px solid #4CAF50';
-            ..
-             = ;
-            showCopyNotification .( .'回复文案已复制成功！'  = ) ;
+            notification.style.fontWeight = 'bold';
+            notification.style.border = '2px solid #4CAF50';
+            notification.style.boxShadow = '0 6px 12px rgba(0, 0, 0, 0.4)';
+            notification.style.textAlign = 'center';
+            notification.style.minWidth = '200px';
             
+            // 设置消息内容
+            notification.textContent = message;
             
-            . = 
+            // 添加到页面
+            document.body.appendChild(notification);
             
-            
-            // 降级方案.body.appendChild(notification);
-            
-            }
-            }捕获（错误）(() => 
+            // 设置消失定时器
+            setTimeout(() => {
                 document.body.removeChild(notification);
             }, 2000);
         }
